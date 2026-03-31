@@ -1,12 +1,12 @@
 const { verify } = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const doctorSchema = new mongoose.Schema({
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'user',
-        required:true,
-        unique:true //ek user ak doctor hoga
-    },
+    // userId:{
+    //     type:mongoose.Schema.Types.ObjectId,
+    //     ref:'user',
+    //     required:true,
+    //     unique:true //ek user ak doctor hoga
+    // },
     firstName:{
         type:String,
         required:true,
@@ -23,12 +23,15 @@ const doctorSchema = new mongoose.Schema({
         
     },
     profileImage:String,
+
     qualification:[{
         degree:String,
         institution:String,
         yearOfCompletion:Number
     }],
-    specialization:[{type:string}],
+
+    specialization:{type:String,
+    enum: ['Cardiologist', 'Dermatologist', 'Neurologist', 'Pediatrician', 'Psychiatrist', 'General Physician', 'Orthopedic', 'Gynecologist']},
     experience:{type:Number,min:0},
     consultationFee:{type:Number, min:0},
     bio:String,

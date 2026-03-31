@@ -1,7 +1,9 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import Register from  "./components/auth/Signup.vue"
+
 </script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> -->
 
 <template>
-  <HelloWorld />
+  <Register/>
 </template>

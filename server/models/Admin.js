@@ -18,7 +18,7 @@ const adminSchema = new mongoose.Schema({
     },
     Permissions:[{
         type:String,
-        enum:['manage_users','manage_doctors','view_reports','manage_appointments'] 
+        enum: ['manage_users', 'manage_doctors', 'manage_pharmacy', 'view_analytics', 'manage_payments']
     }],
     assignedAreas:[{type:String}],
 },{

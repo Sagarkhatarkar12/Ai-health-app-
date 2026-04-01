@@ -1,12 +1,7 @@
 const mongoose = require('mongoose');
 
 const patientSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-        unique: true
-    },
+  
 
     firstName: { 
         type: String, 
@@ -21,7 +16,7 @@ const patientSchema = new mongoose.Schema({
     },
 
     dateOfBirth: { 
-        type: Date, 
+        type: String, 
         required: true 
     },
 

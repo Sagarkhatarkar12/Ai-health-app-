@@ -1,9 +1,7 @@
 <script setup>
-import Register from  "./components/auth/Signup.vue"
-
+import PatientSignup from "./components/page/PationSignup.vue"
 </script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> -->
 
 <template>
-  <Register/>
+  <PatientSignup />
 </template>

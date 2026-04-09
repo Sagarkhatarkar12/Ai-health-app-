@@ -1,7 +1,9 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require("./routes/authRoutes");
+const medicineRoutes = require("./routes/medicineRoutes");
+const getMedicineInfo = require("./controllers/medicineController");
 
 const dotenv = require("dotenv");
 
@@ -22,10 +24,12 @@ app.use(
 app.get("/", (req, res) => {
   res.send("Hello World! Welcome to the AI Health Care System API");
 });
+app.post("/api/medicine", getMedicineInfo);
 // routes
-app.use('/api/auth',authRoutes);
+app.use("/api/auth", authRoutes);
 
-
+// medicine Routes information releated
+app.use("/api/medicine", medicineRoutes);
 
 // app.post("/api/auth/register", async (req, res) => {
 //   try {
@@ -110,7 +114,6 @@ app.use('/api/auth',authRoutes);
 //     res.status(500).send("Registration failed");
 //   }
 // });
-
 
 // server code is here
 

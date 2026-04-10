@@ -1,10 +1,14 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './Router'        // ← Yeh line add karo
-import './main.css'
+if (typeof global === "undefined") {
+  window.global = window;
+} // ← Yeh line bahut important hai
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./Router"; // ← Yeh line add karo
+import "./main.css";
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(router)                       // ← Yeh line bahut important hai
+app.use(router);
+// main.js / main.ts
 
-app.mount('#app')
+app.mount("#app");

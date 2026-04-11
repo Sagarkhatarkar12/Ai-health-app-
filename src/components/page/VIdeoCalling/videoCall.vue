@@ -113,8 +113,8 @@ import { ref, onMounted, onUnmounted, computed, watch, nextTick } from "vue";
 import { io } from "socket.io-client";
 import SimplePeer from "simple-peer/simplepeer.min.js";
 import Chat from "./chat.vue"
-const currentRoom = ref("room")
 const currentUsername = ref("user_" + Math.floor(Math.random() * 1000));
+import { useRoute } from "vue-router";
 // --- Icons ---
 
 import {
@@ -130,6 +130,19 @@ import {
 } from "lucide-vue-next";
 // --- Refs ---
 // all varibale jab inki value koi change hota automatic chnage
+
+const route = useRoute();
+const currentRoom = computed(() => {
+  return route.params.roomId || "default-room";
+});
+watch(
+  () => route.params.roomId,
+  (newRoom) => {
+    console.log("Room ID:", newRoom);
+  },
+  { immediate: true }
+);
+// const route = useRoute();
 const localVideo = ref(null);
 const remoteVideo = ref(null);
 const peer = ref(null);
@@ -152,6 +165,7 @@ let durationInterval = null;
 let qualityInterval = null;
 let previewStream = null; // store preview stream
 let currentCallStream = null;
+// console.log(currentRoom1.value)
 
 const socket = io("http://localhost:3000"); // isse backend me request jati hai connection jamane ke liye
 
@@ -251,7 +265,7 @@ async function startCall() {
     // Room join  kar liya hai
 
     socket.emit("join-room", {
-      room: "room",
+      room: currentRoom.value,
       username: "user1" + Math.random(100),
     });
     // peer connection fir bej rhe hai
@@ -297,7 +311,7 @@ async function createPeer(initiator, stream) {
 
   peer.value.on("signal", (data) =>
     socket.emit("signal", {
-      room: "room",
+      room: currentRoom.value,
       data: data,
     }),
   );
@@ -323,6 +337,9 @@ async function createPeer(initiator, stream) {
 
 // end call 
 function endCall() {
+  socket.emit("leave-room", {
+    room: currentRoom.value,
+  });
   if (peer.value) {
     peer.value.destroy()
     peer.value = null

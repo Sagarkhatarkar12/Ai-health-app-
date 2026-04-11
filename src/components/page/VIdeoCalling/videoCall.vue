@@ -91,24 +91,12 @@
     </transition>
 
     <!-- Chat sidebar (improved) -->
-    <div class="chat-sidebar" :class="{ open: chatOpen }">
-      <div class="chat-header">
-        <h3>Chat</h3>
-        <button @click="chatOpen = false" class="close-chat">✕</button>
-      </div>
-      <div class="chat-messages" ref="chatMessages">
-        <div class="message system">✨ Welcome! Start a call to chat.</div>
-      </div>
-      <div class="chat-input">
-        <input type="text" placeholder="Type a message..." v-model="chatMessage" @keyup.enter="sendMessage"
-          :disabled="!isCalling" />
-        <button @click="sendMessage" :disabled="!isCalling">Send</button>
-      </div>
-    </div>
+    <!-- Inside VideoCall.vue template, replace the old chat sidebar -->
     <button class="toggle-chat" @click="chatOpen = !chatOpen">
       <MessageCircleIcon :size="22" />
     </button>
-
+    <Chat v-if="chatOpen" :socket="socket" :roomId="currentRoom" :currentUsername="currentUsername"
+      :isCallActive="isCalling" :showClose="true" @close="chatOpen = false" class="chat-sidebar-component" />
     <!-- Toast notifications -->
     <div class="toast-container">
       <transition-group name="toast">
@@ -124,6 +112,10 @@
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from "vue";
 import { io } from "socket.io-client";
 import SimplePeer from "simple-peer/simplepeer.min.js";
+import Chat from "./chat.vue"
+const currentRoom = ref("room")
+const currentUsername = ref("user_" + Math.floor(Math.random() * 1000));
+// --- Icons ---
 
 import {
   PhoneIcon,
@@ -220,23 +212,23 @@ function addToast(message, type = "info") {
 }
 
 // // --- Chat functionality ---
-// function sendMessage() {
-//   if (!isCalling.value) {
-//     addToast('Start a call to send messages', 'warning')
-//     return
-//   }
+function sendMessage() {
+  if (!isCalling.value) {
+    addToast('Start a call to send messages', 'warning')
+    return
+  }
 
-//   if (!chatMessage.value.trim()) return
-//   const msgDiv = document.createElement('div')
-//   msgDiv.className = 'message you'
-//   msgDiv.innerText = `You: ${chatMessage.value}`
-//   chatMessages.value?.appendChild(msgDiv)
-//   // Auto-scroll
-//   if (chatMessages.value) chatMessages.value.scrollTop = chatMessages.value.scrollHeight
-//   chatMessage.value = ''
-//   // In real app, emit to socket
-//   socket.emit('chat_message', { text: chatMessage.value, from: 'local' })
-// }
+  if (!chatMessage.value.trim()) return
+  const msgDiv = document.createElement('div')
+  msgDiv.className = 'message you'
+  msgDiv.innerText = `You: ${chatMessage.value}`
+  chatMessages.value?.appendChild(msgDiv)
+  // Auto-scroll
+  if (chatMessages.value) chatMessages.value.scrollTop = chatMessages.value.scrollHeight
+  // In real app, emit to socket
+  socket.emit('chat_message', { text: chatMessage.value, from: 'local' })
+  chatMessage.value = ''
+}
 
 // // --- Media & Call Logic ---
 
@@ -280,14 +272,15 @@ async function startCall() {
 // isme two room add hone logo me diffrence pata karte hai ki kaun client hai or kaun server hai 
 
 socket.on("init", ({ initiator }) => {
+
   createPeer(initiator, currentCallStream);
 })
 
 
 // creating peer  it is in video calling features
 async function createPeer(initiator, stream) {
-  // simple peer connection setup kar frontend se backend se
 
+  // simple peer connection setup kar frontend se backend se
 
   peer.value = new SimplePeer({
     initiator: initiator,
@@ -299,14 +292,23 @@ async function createPeer(initiator, stream) {
 
   console.log("Peer is connected");
   // on signal me data ko bejta hai 
+  // sender 
+
+
   peer.value.on("signal", (data) =>
     socket.emit("signal", {
       room: "room",
       data: data,
     }),
   );
-  socket.on("signal", (data) => peer.value.signal(data));
 
+  //  SIGNAL RECEIVE
+  socket.off("signal"); // duplicate listener remove
+  socket.on("signal", (data) => {
+    peer.value.signal(data);
+  });
+
+  // Remote stream
   peer.value.on("stream", (remoteStream) => {
     remoteVideo.value.srcObject = remoteStream;
   });
@@ -319,31 +321,31 @@ async function createPeer(initiator, stream) {
   addToast("Call started", "success");
 }
 
-
-// function endCall() {
-//   if (peer.value) {
-//     peer.value.destroy()
-//     peer.value = null
-//   }
-//   if (currentCallStream) {
-//     currentCallStream.getTracks().forEach(track => track.stop())
-//     currentCallStream = null
-//   }
-//   // Restore preview stream
-//   navigator.mediaDevices.getUserMedia({ video: cameraOn.value, audio: false })
-//     .then(stream => {
-//       previewStream = stream
-//       localVideo.value.srcObject = stream
-//     })
-//     .catch(err => console.warn('Preview stream failed', err))
-//   remoteVideo.value.srcObject = null
-//   isCalling.value = false
-//   clearInterval(durationInterval)
-//   clearInterval(qualityInterval)
-//   callDuration.value = '00:00'
-//   addToast('Call ended', 'info')
-// }
-
+// end call 
+function endCall() {
+  if (peer.value) {
+    peer.value.destroy()
+    peer.value = null
+  }
+  if (currentCallStream) {
+    currentCallStream.getTracks().forEach(track => track.stop())
+    currentCallStream = null
+  }
+  // Restore preview stream
+  navigator.mediaDevices.getUserMedia({ video: cameraOn.value, audio: false })
+    .then(stream => {
+      previewStream = stream
+      localVideo.value.srcObject = stream
+    })
+    .catch(err => console.warn('Preview stream failed', err))
+  remoteVideo.value.srcObject = null
+  isCalling.value = false
+  clearInterval(durationInterval)
+  clearInterval(qualityInterval)
+  callDuration.value = '00:00'
+  addToast('Call ended', 'info')
+}
+// update timer 
 function updateTimer() {
   if (!callStartTime) return;
   const diff = Math.floor((Date.now() - callStartTime) / 1000);
@@ -369,21 +371,52 @@ const networkQualityText = computed(() => {
   return "Poor";
 });
 
-// async function shareScreen() {
-//   if (!isCalling.value) return
-//   try {
-//     const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true })
-//     if (peer.value) {
-//       displayStream.getTracks().forEach(track => {
-//         peer.value.addTrack(track, peer.value.stream)
-//         track.onended = () => peer.value.removeTrack(track)
-//       })
-//       addToast('Screen sharing started', 'info')
-//     }
-//   } catch (err) {
-//     addToast('Screen share cancelled or failed', 'warning')
-//   }
-// }
+async function shareScreen() {
+  if (!isCalling.value) return;
+
+  try {
+    const displayStream = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+    });
+
+    const screenTrack = displayStream.getVideoTracks()[0];
+
+    // 🔁 Replace video track (IMPORTANT)
+    const sender = peer.value._pc
+      .getSenders()
+      .find((s) => s.track.kind === "video");
+
+    if (sender) {
+      sender.replaceTrack(screenTrack);
+    }
+
+    // Show on local video
+    localVideo.value.srcObject = displayStream;
+
+    // When user stops sharing
+    screenTrack.onended = async () => {
+      const camStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+
+      const camTrack = camStream.getVideoTracks()[0];
+
+      const sender = peer.value._pc
+        .getSenders()
+        .find((s) => s.track.kind === "video");
+
+      if (sender) {
+        sender.replaceTrack(camTrack);
+      }
+
+      localVideo.value.srcObject = camStream;
+    };
+
+    addToast("Screen sharing started", "success");
+  } catch (err) {
+    addToast("Screen share cancelled", "warning");
+  }
+}
 
 function toggleCamera() {
   cameraOn.value = !cameraOn.value;
@@ -996,6 +1029,22 @@ onUnmounted(() => {
     top: 10px;
     left: 10px;
     font-size: 0.7rem;
+  }
+}
+
+/* chat */
+.chat-sidebar-component {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: 100%;
+  z-index: 200;
+}
+
+@media (max-width: 640px) {
+  .chat-sidebar-component {
+    width: 85%;
   }
 }
 </style>

@@ -29,14 +29,10 @@ app.use(express.json());
 // io connection karna hai
 const roomUser = new Map();
 
-let rooms ={};
+let rooms = {};
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
 
-
-
-
-  
   // join room
   socket.on("join-room", ({ room, username }) => {
     const prevRoom = socket.room;
@@ -52,21 +48,21 @@ io.on("connection", (socket) => {
     }
 
     // naya room join
-    console.log(room,username);
+    console.log(room, username);
 
     socket.join(room);
     socket.room = room;
     socket.username = username;
-    if(!rooms[room]){
+    if (!rooms[room]) {
       rooms[room] = [];
     }
-     rooms[room].push(socket.id);
-     const isInitiator = rooms[room].length === 1;
-     socket.emit("init", { initiator: isInitiator });
+    rooms[room].push(socket.id);
+    const isInitiator = rooms[room].length === 1;
+    socket.emit("init", { initiator: isInitiator });
 
     // Notify others
     socket.to(room).emit("user-joined");
-    
+
     if (!roomUser.has(room)) {
       roomUser.set(room, new Set());
     }
@@ -74,8 +70,11 @@ io.on("connection", (socket) => {
     io.to(room).emit("room-users", Array.from(roomUser.get(room)));
     console.log(`User ${username} joined room ${room}`);
   });
+  // chat
   socket.on("chat-message", ({ room, msg, username, timestamp }) => {
-    io.to(room).emit("chat-message", { msg, username, timestamp:new Date() });
+    socket
+      .to(room)
+      .emit("chat-message", { msg, username, timestamp: new Date() });
     console.log(`💬 ${username} in ${room}: ${msg}`);
   });
 
@@ -84,13 +83,11 @@ io.on("connection", (socket) => {
     socket.to(room).emit("typing", { username });
     console.log(`${username} is typing in ${room}`);
   });
-// WEBRTC SIGNAL
+  // WEBRTC SIGNAL
   socket.on("signal", ({ room, data }) => {
     // console.log(room);
     socket.to(room).emit("signal", data);
   });
-
-
 
   // 4 Disconnect
   socket.on("disconnect", () => {
@@ -98,13 +95,13 @@ io.on("connection", (socket) => {
     const username = socket.username;
 
     // remove from rooms  se data ko delete karte hai
-  if (rooms[room]) {
-    rooms[room] = rooms[room].filter(id => id !== socket.id);
+    if (rooms[room]) {
+      rooms[room] = rooms[room].filter((id) => id !== socket.id);
 
-    if (rooms[room].length === 0) {
-      delete rooms[room];
+      if (rooms[room].length === 0) {
+        delete rooms[room];
+      }
     }
-  }
     if (room && roomUser.has(room)) {
       roomUser.get(room).delete(username);
       if (roomUser.get(room).size === 0) {
@@ -116,8 +113,6 @@ io.on("connection", (socket) => {
     }
     console.log("user disconnected", socket.id);
   });
-
- 
 });
 
 // store room-wise users

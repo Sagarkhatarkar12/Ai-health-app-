@@ -6,6 +6,8 @@ import App from "./App.vue";
 import router from "./Router"; // ← Yeh line add karo
 import "./main.css";
 
+
+
 const app = createApp(App);
 
 app.use(router);

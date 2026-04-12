@@ -12,6 +12,7 @@ const http = require("http");
 const socketIo = require("socket.io");
 const app = express();
 const server = http.createServer(app);
+const { registerUser } = require("./controllers/authController");
 const io = socketIo(server, {
   cors: {
     origin: "*", // development ke liye, production mein specific origin daalna
@@ -36,24 +37,20 @@ app.use(
 );
 
 // test router
-
 app.get("/", (req, res) => {
   res.send("Hello World! Welcome to the AI Health Care System API");
 });
+// MedicineInfo
 app.post("/api/medicine", getMedicineInfo);
-// videoCall features
-// app.post("/videoCall/create-room", getCreateCall);
-// app.get("/videoCall/call/:roomId", getCreateCall(io));
-// app.post("/videoCall/end-call", endCall);
 
 // routes
-app.use("/api/auth", authRoutes);
+// app.use("/api/auth", authRoutes);
+app.post("/api/register", registerUser);
 
 // medicine Routes information releated
-app.use("/api/medicine", medicineRoutes);
+// app.use("/api/medicine", medicineRoutes);
 
 // server code is here
-
 const StartServer = async () => {
   try {
     await connectDB(); // database connection

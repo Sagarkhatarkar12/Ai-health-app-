@@ -19,13 +19,17 @@ const registerUser = async (req, res) => {
     gender: req.body.gender,
     address: req.body.address,
     bloodGroup: req.body.bloodGroup,
+    profileImage: req.body.profileImage,
+    medicalLicense: req.body.medicalLicense,
+    identityProof: req.body.identityProof,
     emergencyContact: req.body.emergencyContact,
+    availability:req.body.availability,
     specialization: req.body.specialization,
     consultationFee: req.body.consultationFee,
-    experence: req.body.experience,
+    experence: req.body.experence,
     languages: req.body.languages,
     bio: req.body.bio,
-    qualification:[req.body.qualifications],
+    qualification: req.body.qualification,
   };
 
   console.log("user data extracted from request:", userData);
@@ -37,14 +41,14 @@ const registerUser = async (req, res) => {
 
     console.log(
       "Checking for existing patient with email:",
-      userData.email,
+      userData.phoneNumber,
       "Found:",
       !!existingUser,
     );
     if (existingUser) {
       return res
         .status(400)
-        .json({ success: false, message: "Email already registered" });
+        .json({ success: false, message: "Phone  already registered" });
     }
     console.log("patient hu bhai !!!!!");
 
@@ -68,109 +72,44 @@ const registerUser = async (req, res) => {
         relationship: userData.emergencyContact.relationship,
       },
     };
+    res.status(200, {
+      json: userData,
+    });
+
     PatientProfileData1 = await Patient.create(PatientProfileData);
     console.log("Patient profile created with ID:", PatientProfileData1._id);
-
-    // console.log("Creating patient profile with data:", Patient.find());
-    // Patient.drop();
-    // const patientResult = await Patient.deleteMany({});
-    // console.log(patientResult);
-    // const patientProfileData =await Patient.create({
-    //       // ← Real User ID se replace karna
-    //   firstName: 'sagar',
-    //   lastName: "khatarkar",
-    //   dateOfBirth: '1997-03-12',
-    //   gender: "Male",
-    //   phoneNumber: '9876543210',
-    //   address: {
-    //     street: "23, Sunshine Apartment",
-    //     city: "Bhopal",
-    //     state: "Madhya Pradesh",
-    //     pincode: "462016",
-    //     country: "India"
-    //   },
-    //   medicalHistory: ["Seasonal allergies", "Mild hypertension"],
-    //   allergies: ["Dust", "Pollen"],
-    //   bloodGroup: "B+",
-    //   emergencyContact: {
-    //     name: "Meera Patel",
-    //     phone: "9988776655",
-    //     relationship: "Mother"
-    //   },
-    //   profileImage: "https://randomuser.me/api/portraits/men/32.jpg",
-    //   preferences: {
-    //     notifications: true,
-    //     newsletter: false
-    //   }
-    // });
-    // console.log("Patient profile data before creation:", patientProfileData);
-    //  profile = await Patient.create(patientProfileData);
-    //  console.log("Patient created with ID:", profile._id);
-    // profile = await Patient.create({
-    //   // userId: "67f8a123456789abcdef1234",        // ← Real User ID se replace karna
-    //   firstName: "Aarav",
-    //   lastName: "Patel",
-    //   dateOfBirth: new Date("1997-03-12"),
-    //   gender: "Male",
-    //   phoneNumber: "9876543210",
-
-    //   address: {
-    //     street: "23, Sunshine Apartment",
-    //     city: "Bhopal",
-    //     state: "Madhya Pradesh",
-    //     pincode: "462016",
-    //     country: "India"
-    //   },
-
-    //   medicalHistory: ["Seasonal allergies", "Mild hypertension"],
-    //   allergies: ["Dust", "Pollen"],
-    //   bloodGroup: "B+",
-
-    //   emergencyContact: {
-    //     name: "Meera Patel",
-    //     phone: "9988776655",
-    //     relationship: "Mother"
-    //   },
-
-    //   profileImage: "https://randomuser.me/api/portraits/men/32.jpg",
-
-    //   preferences: {
-    //     notifications: true,
-    //     newsletter: false
-    //   }
-
-    // });
-    // console.log("Patient created with ID:", profile._id);
+    res.status(201).json({
+      success: true,
+      message: "Patient registered successfully",
+      data: PatientProfileData1,
+    });
   } else if (userData.role === "doctor") {
     doctorProfileData = {
       firstName: userData.firstName,
       lastName: userData.lastName,
       phoneNumber: userData.phoneNumber,
-      qualification: [{
-        degree: userData.qualification.degree,
-        institution: userData.qualification.institution,
-        yearOfCompletion: userData.qualification.yearOfCompletion
-      }],
+      profileImage: userData.profileImage,
+      medicalLicense: userData.medicalLicense,
+      identityProof: userData.identityProof,
+      availability:userData.availability,
+      qualification: userData.qualification.map((q) => ({
+        degree: q.degree,
+        institution: q.institution,
+        yearOfCompletion: q.yearOfCompletion,
+      })),
       specialization: userData.specialization,
       consultationFee: userData.consultationFee,
       experience: userData.experience,
       languages: userData.languages,
     };
-      profile = await Doctor.create(doctorProfileData);
-      console.log("Doctor profile created with ID:", profile._id);
+    profile = await Doctor.create(doctorProfileData);
+    console.log("Doctor profile created with ID:", profile._id);
+    res.status(201).json({
+      success: true,
+      message: "Doctor registered successfully",
+      data: doctorProfileData,
+    });
     // profile = await Doctor.create({
-
-    //   firstName: name,
-    //   lastName: " ",
-    //   phoneNumber: phone,
-    //   specialization,
-    //   consultationFee,
-    //   isVerified: false
-    // });
   }
-  // const jwtToken = jwt.sign({
-  //   role: userData.role,
-  //   email: userData.email,
-  // })
 };
 module.exports = { registerUser };

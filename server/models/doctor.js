@@ -54,6 +54,9 @@ const doctorSchema = new mongoose.Schema({
         enum:['pending','verified','rejected'],
         default:'pending'
     },
+    medicalLicense:{type:String},
+    identityProof:{type:String},
+    
     rating:{type:Number,min:0,max:5,default:0},
     totalReviews:{type:Number,min:0,default:0},
     isAvailable:{type:Boolean,default:true},

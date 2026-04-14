@@ -12,6 +12,7 @@
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.15.0",
     "lucide-vue-next": "^1.0.0",
+    "pinia": "^3.0.4",
     "simple-peer": "^9.11.1",
     "socket.io-client": "^4.8.3",
     "tailwindcss": "^4.2.2",

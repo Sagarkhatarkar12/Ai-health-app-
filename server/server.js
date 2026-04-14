@@ -12,7 +12,7 @@ const http = require("http");
 const socketIo = require("socket.io");
 const app = express();
 const server = http.createServer(app);
-const { registerUser } = require("./controllers/authController");
+const { registerUser, loginUser } = require("./controllers/authController");
 const io = socketIo(server, {
   cors: {
     origin: "*", // development ke liye, production mein specific origin daalna
@@ -46,6 +46,7 @@ app.post("/api/medicine", getMedicineInfo);
 // routes
 // app.use("/api/auth", authRoutes);
 app.post("/api/register", registerUser);
+app.post("/api/login", loginUser);
 
 // medicine Routes information releated
 // app.use("/api/medicine", medicineRoutes);

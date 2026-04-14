@@ -293,9 +293,11 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { Stethoscope, Heart } from 'lucide-vue-next'
+import { useAuthStore } from '../../stores/auth'
+const authStore = useAuthStore()
 
 // Role
-const role = ref < 'doctor' | 'patient' > ('doctor')
+const role = ref<'doctor' | 'patient'>('doctor')
 
 // Common form
 const form = reactive({
@@ -335,7 +337,7 @@ const form = reactive({
 })
 
 // Preview
-const profilePreview = ref < string | null > (null)
+const profilePreview = ref<string | null>(null)
 
 // Dynamic helpers
 const addQualification = () => form.doctor.qualification.push({ degree: '', institution: '', yearOfCompletion: new Date().getFullYear() })
@@ -378,7 +380,16 @@ const handleSubmit = async () => {
   console.log('Signup payload:', payload)
   alert(`🎉 ${role.value === 'doctor' ? 'Doctor' : 'Patient'} account created! Check console for data.`)
   // Replace with actual API call
+  if (role.value == "doctor") {
+    authStore.signUp(payload);
+  }
+  else {
+    authStore.signUp(Payload);
+  }
 }
+
+
+
 </script>
 
 <style scoped>

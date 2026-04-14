@@ -3,6 +3,7 @@ import VideoCall from '../components/page/VIdeoCalling/videoCall.vue'
 import Home from '../components/page/Home.vue';
 // import PatientDashboard from './pages/PatientDashboard.vue'
 import patient from "../components/page/PatientDashboard.vue"
+import Login from "../components/page/LoginPage.vue"
 import DoctorDashboard from '../components/page/doctorDashboard.vue'
 import signup from '../components/page/SignupPage.vue'
 // import DoctorLogin from './pages/DoctorLogin.vue'
@@ -17,7 +18,9 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('./components/auth/Login.vue')
+    // component: () => import('./components/auth/Login.vue')
+    component:Login
+
   },
    
   {
@@ -38,7 +41,7 @@ const routes = [
 
   },
   {
-    path: '/doctor',
+    path: '/api/register',
     name: 'DoctorDashboard',
     component: signup
 

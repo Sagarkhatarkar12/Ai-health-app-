@@ -19,6 +19,17 @@
 
       <!-- Desktop Navigation Links -->
       <div class="hidden md:flex items-center space-x-1">
+        <!-- Ayurvedic Chatbot - visible to all -->
+        <router-link
+          to="/ayurvedic-chatbot"
+          class="relative px-5 py-2.5 rounded-xl text-sm font-medium text-emerald-300 hover:text-white transition-colors duration-300 group"
+        >
+          <span class="relative z-10 flex items-center gap-1">
+            <span>🌿</span> Ayurvedic AI
+          </span>
+          <span class="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/20 to-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-transparent group-hover:border-emerald-500/30"></span>
+        </router-link>
+
         <!-- Show dashboard links only when logged in and role matches -->
         <template v-if="authStore.isAuthenticated">
           <router-link
@@ -83,8 +94,14 @@
         <!-- User Menu (when logged in) -->
         <div v-if="authStore.isAuthenticated" class="relative" @click="toggleUserMenu">
           <button class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-semibold">
-              {{ userInitials }}
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-semibold overflow-hidden">
+              <img
+                v-if="authStore.user?.profile?.profileImage"
+                :src="authStore.user.profile.profileImage"
+                alt="Profile"
+                class="w-full h-full object-cover"
+              />
+              <span v-else>{{ userInitials }}</span>
             </div>
             <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -127,6 +144,15 @@
     >
       <div v-if="mobileMenuOpen" class="md:hidden mt-4 pt-4 border-t border-white/10">
         <div class="flex flex-col space-y-1">
+          <!-- Ayurvedic Chatbot (mobile) -->
+          <router-link
+            to="/ayurvedic-chatbot"
+            class="px-4 py-3 rounded-xl text-emerald-300 hover:text-white hover:bg-emerald-500/10 transition-colors flex items-center gap-2"
+            @click="mobileMenuOpen = false"
+          >
+            <span>🌿</span> Ayurvedic AI
+          </router-link>
+
           <template v-if="authStore.isAuthenticated">
             <router-link
               v-if="authStore.userRole === 'patient'"
@@ -207,7 +233,6 @@ function handleLogout() {
   router.push('/login')
 }
 
-// Close dropdown when clicking outside
 function closeUserMenuOnClickOutside(event: MouseEvent) {
   const target = event.target as HTMLElement
   if (!target.closest('.relative')) {

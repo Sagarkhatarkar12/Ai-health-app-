@@ -19,7 +19,7 @@ const registerUser = async (req, res) => {
 
     console.log(data);
 
-    const patientData =  data || {};
+    const patientData = data || {};
     const doctorData = data.doctor || {};
 
     // console.log(data.patientData.dateOfBirth)
@@ -245,7 +245,9 @@ const loginUser = async (req, res) => {
     // get Profile data
     let profile = null;
     if (user.role === "patient") {
+      console.log("userid" + user._id);
       profile = await Patient.findOne({ userId: user._id });
+      console.log("profile :" + profile);
     } else if (user.role === "doctor") {
       profile = await Doctor.findOne({ userId: user._id });
     }

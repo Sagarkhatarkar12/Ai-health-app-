@@ -356,6 +356,7 @@ const mockDatabase: Record<string, MedicineData> = {
 
 // --- API Function ---
 async function fetchMedicineInfo(searchName: string) {
+  console.log(searchName)
   if (!searchName.trim()) {
     error.value = 'Please enter a medicine name'
     return
@@ -367,7 +368,7 @@ async function fetchMedicineInfo(searchName: string) {
   const key = searchName.trim().toLowerCase()
 
   try {
-    const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+    const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
     const res = await axios.post(`${baseURL}/api/medicine`, {
       medicineName: key
     })

@@ -19,11 +19,15 @@ export const useAuthStore = defineStore("auth", {
         console.log(email, password);
         // alert(email);
         const response = await api.post("/api/login", { email, password });
-        console.log(response);
+
         this.token = response.data.token;
         this.user = response.data.user;
         localStorage.setItem("token", this.token);
         api.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
+        console.log(response);
+        // this.user = response.user;
+        console.log(this.user);
+        // router.push("/patient/dashboard");
         return response;
       } catch (error) {
         throw error;
@@ -44,7 +48,7 @@ export const useAuthStore = defineStore("auth", {
       this.token = null;
       localStorage.removeItem("token");
       delete api.defaults.headers.common["Authorization"];
-      router.push("/login");
+      // router.push("/login");
     },
 
     async fetchProfile() {

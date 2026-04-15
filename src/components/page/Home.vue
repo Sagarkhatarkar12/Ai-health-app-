@@ -58,8 +58,7 @@
 
           <router-link
             to="/doctor"
-            class="group px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/20 text-white font-semibold text-lg hover:bg-white/10 hover:border-white/30 transition-all duration-300 hover:scale-105"
-          >
+            class="group px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/20 text-white font-semibold text-lg hover:bg-white/10 hover:border-white/30 transition-all duration-300 hover:scale-105">
             <span class="flex items-center gap-2">
               Doctor Dashboard
               <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

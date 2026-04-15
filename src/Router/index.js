@@ -4,17 +4,17 @@ import Home from '../components/page/Home.vue';
 // import PatientDashboard from './pages/PatientDashboard.vue'
 import patient from "../components/page/PatientDashboard.vue"
 import Login from "../components/page/LoginPage.vue"
-import DoctorDashboard from '../components/page/doctorDashboard.vue'
+// import DoctorDashboard from '../components/page/doctorDashboard.vue'
 import signup from '../components/page/SignupPage.vue'
 // import DoctorLogin from './pages/DoctorLogin.vue'
 // import NotFound from './pages/NotFound.vue'
+import patientDashboard  from "../components/page/patient/patientDashboard.vue"
+// import DoctorDashboard from "../components/page/Doctor/DoctorDashboard.vue"
+import DoctorDashboard from "../components/page/Doctor/DoctorDashboard.vue"
+import ayurvedic from "../components/page/ayurvedic.vue"
 // import PatientLogin from './pages/PatientLogin.vue'
 const routes = [
-  {
-    path: '/signup',
-    name: 'Signup',
-    // component: () => import('./components/auth/Signup.vue')
-  },
+
   {
     path: '/login',
     name: 'Login',
@@ -42,14 +42,31 @@ const routes = [
   },
   {
     path: '/api/register',
-    name: 'DoctorDashboard',
+    name: 'reigster',
     component: signup
 
   },
+  // {
+  //   path: '/signup',
+  //   name: 'signup',
+  //   component: signup
+  // },
   {
-    path: '/signup',
-    name: 'signup',
-    component: signup
+    path:'/patient/dashboard',
+    name:"PatientDashboard",
+    component:patientDashboard
+
+  }
+  ,{
+    path:'/doctor/dashboard',
+    name:"DoctorDashboard",
+    component:DoctorDashboard
+
+  },
+  {
+ path:'/ayurvedic-chatbot',
+ name:"AyurvedicChatbot",
+ component:ayurvedic,
   }
 
 

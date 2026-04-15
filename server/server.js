@@ -10,9 +10,10 @@ const IoTaken = require("./controllers/videoCallController");
 // socket io se releated
 const http = require("http");
 const socketIo = require("socket.io");
+const { ayurvedicChat } = require("./controllers/ayurvedic");
 const app = express();
 const server = http.createServer(app);
-const upload = require("./middleware/upload")
+const upload = require("./middleware/upload");
 const { registerUser, loginUser } = require("./controllers/authController");
 const io = socketIo(server, {
   cors: {
@@ -44,12 +45,15 @@ app.get("/", (req, res) => {
 // MedicineInfo
 app.post("/api/medicine", getMedicineInfo);
 
+app.post("/api/ayurvedic", ayurvedicChat);
+
 // routes
 // app.use("/api/auth", authRoutes);
-app.post("/api/register", upload.fields([
-  {name:"profileImage",maxCount:1}
-
-]), registerUser);
+app.post(
+  "/api/register",
+  upload.fields([{ name: "profileImage", maxCount: 1 }]),
+  registerUser,
+);
 app.post("/api/login", loginUser);
 
 // medicine Routes information releated

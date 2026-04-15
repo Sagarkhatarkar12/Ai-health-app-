@@ -2,7 +2,12 @@ const mongoose = require('mongoose');
 
 const patientSchema = new mongoose.Schema({
   
-
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+      unique: true, //ek user ak doctor hoga
+    },
     firstName: { 
         type: String, 
         required: true, 

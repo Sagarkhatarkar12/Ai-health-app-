@@ -10,5 +10,7 @@ import NavBar from "./components/page/NavBar.vue";
    <!-- <socket /> -->
     <NavBar/>
     
-     <router-view />>
+     <<main class="pt-10">
+    <router-view />
+  </main>
 </template>

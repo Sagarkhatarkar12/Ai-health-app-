@@ -4,39 +4,27 @@ const Patient = require("../models/Patient");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const cloudinary = require("../config/cloudinary");
 dotenv.config();
 
 const registerUser = async (req, res) => {
   try {
-    console.log("Received registration data:", req.body);
-    const data = req.body.paylaod;
-    // console.log(data);
-
-
-    const {
-      role,
-      firstName,
-      lastName,
-      email,
-      password,
-      phoneNumber,
-      dateOfBirth,
-      gender,
-      address,
-      bloodGroup,
-      profileImage,
-      document,
-      emergencyContact,
-      availability,
-      specialization,
-      consultationFee,
-      experience,
-      languages,
-      bio,
-      qualification,
-    } = data;
+    // console.log("Received registration data:", req.body);
+    const data = req.body.payload ? JSON.parse(req.body.payload) : req.body;
     // const data = req.body.payload;
-    console.log("role"+role);
+    // console.log("Requet data "+req.body);
+    // console.log("data "+data);
+
+    const { role, firstName, lastName, email, password, phoneNumber } = data;
+
+    console.log(data);
+
+    const patientData =  data || {};
+    const doctorData = data.doctor || {};
+
+    // console.log(data.patientData.dateOfBirth)
+    const profileImageFile = req.files?.profileImage?.[0];
+    const profileUrl = profileImageFile.path;
 
     // Validate required fields
     if (!email || !password || !role) {
@@ -92,13 +80,13 @@ const registerUser = async (req, res) => {
         userId: user._id,
         firstName,
         lastName,
-        dateOfBirth,
-        gender,
+        dateOfBirth: patientData.dateOfBirth,
+        gender: patientData.gender,
         phoneNumber,
-        address,
-        bloodGroup,
-        emergencyContact,
-        profileImage,
+        profileImage: profileUrl || "",
+        address: patientData.address,
+        bloodGroup: patientData.bloodGroup,
+        emergencyContact: patientData.emergencyContact,
       });
     } else if (role === "doctor") {
       profile = await Doctor.create({
@@ -106,21 +94,33 @@ const registerUser = async (req, res) => {
         firstName,
         lastName,
         phoneNumber,
-        profileImage,
-        document: document || {},
-        availability,
-        qualification: Array.isArray(qualification)
-          ? qualification.map((q) => ({
+        profileImage: profileUrl || "",
+
+        document: {
+          medicalLicense: doctorData.medicalLicense || null,
+          identityProof: doctorData.identityProof || null,
+        },
+
+        availability: doctorData.availability,
+
+        qualification: Array.isArray(doctorData.qualification)
+          ? doctorData.qualification.map((q) => ({
               degree: q.degree,
               institution: q.institution,
               yearOfCompletion: q.yearOfCompletion,
             }))
           : [],
-        specialization,
-        consultationFee,
-        experience,
-        languages,
-        bio,
+
+        specialization: doctorData.specialization,
+        consultationFee: doctorData.consultationFee,
+        experience: doctorData.experience,
+
+        // 👇 IMPORTANT (string → array convert)
+        languages: doctorData.languagesRaw
+          ? doctorData.languagesRaw.split(",").map((l) => l.trim())
+          : [],
+
+        bio: doctorData.bio,
       });
     } else {
       await User.findByIdAndDelete(user._id);
@@ -132,7 +132,11 @@ const registerUser = async (req, res) => {
 
     // Link profile to user
     user.profileId = profile._id;
-    await user.save();
+    try {
+      await user.save();
+    } catch (error) {
+      console.log("error" + error);
+    }
 
     // Generate JWT (use user._id)
     const token = jwt.sign(
@@ -213,6 +217,7 @@ const loginUser = async (req, res) => {
         message: "Account is locket. Please contact support",
       });
     }
+
     // Compare password
     console.log(password);
     console.log(user.password);

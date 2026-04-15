@@ -2,11 +2,11 @@ const { verify } = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const doctorSchema = new mongoose.Schema(
   {
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'user',
-        required:true,
-        unique:true //ek user ak doctor hoga
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+      unique: true, //ek user ak doctor hoga
     },
     firstName: {
       type: String,
@@ -22,6 +22,7 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     profileImage: String,
 
     qualification: [
@@ -67,7 +68,6 @@ const doctorSchema = new mongoose.Schema(
       enum: ["pending", "verified", "rejected"],
       default: "pending",
     },
-  
 
     rating: { type: Number, min: 0, max: 5, default: 0 },
     totalReviews: { type: Number, min: 0, default: 0 },

@@ -12,6 +12,7 @@ const http = require("http");
 const socketIo = require("socket.io");
 const app = express();
 const server = http.createServer(app);
+const upload = require("./middleware/upload")
 const { registerUser, loginUser } = require("./controllers/authController");
 const io = socketIo(server, {
   cors: {
@@ -45,7 +46,10 @@ app.post("/api/medicine", getMedicineInfo);
 
 // routes
 // app.use("/api/auth", authRoutes);
-app.post("/api/register", registerUser);
+app.post("/api/register", upload.fields([
+  {name:"profileImage",maxCount:1}
+
+]), registerUser);
 app.post("/api/login", loginUser);
 
 // medicine Routes information releated

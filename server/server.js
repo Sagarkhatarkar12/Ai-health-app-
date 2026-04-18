@@ -2,7 +2,7 @@ const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const availabilityRoutes = require("./routes/availabilityRoutes")
+const availabilityRoutes = require("./routes/availabilityRoutes");
 // Availability se releated logic here
 const Availability = require("./models/Available");
 const {
@@ -11,6 +11,7 @@ const {
 } = require("./controllers/availabilityController");
 // appointment se releated logic here
 const Appointment = require("../server/models/Appointment");
+const Doctor = require("./models/doctor")
 
 const authRoutes = require("./routes/authRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
@@ -23,6 +24,7 @@ const socketIo = require("socket.io");
 const { ayurvedicChat } = require("./controllers/ayurvedic");
 const app = express();
 const server = http.createServer(app);
+// const User = require("./models/doctor")
 const upload = require("./middleware/upload");
 const { registerUser, loginUser } = require("./controllers/authController");
 const io = socketIo(server, {
@@ -69,10 +71,36 @@ app.post("/api/login", loginUser);
 // availibility releated code add karne ke liye used karte hai
 
 app.get("/api/doctors", async (req, res) => {
-  console.log("doctors api");
-  // console.log(doctorId)
-  const { search, specialization } = req.query;
   try {
+ const query = {};
+  console.log("doctors api");
+  const { search, specialization } = req.query;
+  // console.log(search, specialization);
+
+     if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { specialization: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    // Additional specialization filter (exact match optional, can be regex)
+    if (specialization) {
+      query.specialization = { $regex: specialization, $options: "i" };
+    }
+    
+      const doctors = await Doctor.find(query)
+      .select("firstName lastName specialization experience rating consultationFee profileImage")
+      .limit(30); // pagination placeholder
+console.log(doctors);
+ res.status(200).json({
+      success: true,
+      count: doctors.length,
+      doctors
+    });
+
+
   } catch (error) {
     console.log(error);
   }

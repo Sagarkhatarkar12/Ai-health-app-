@@ -1,6 +1,16 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
+const mongoose = require("mongoose");
+const availabilityRoutes = require("./routes/availabilityRoutes")
+// Availability se releated logic here
+const Availability = require("./models/Available");
+const {
+  getDoctorSlots,
+  Add_slots,
+} = require("./controllers/availabilityController");
+// appointment se releated logic here
+const Appointment = require("../server/models/Appointment");
 
 const authRoutes = require("./routes/authRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
@@ -55,6 +65,23 @@ app.post(
   registerUser,
 );
 app.post("/api/login", loginUser);
+
+// availibility releated code add karne ke liye used karte hai
+
+app.get("/api/doctors", async (req, res) => {
+  console.log("doctors api");
+  // console.log(doctorId)
+  const { search, specialization } = req.query;
+  try {
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Availablity logic here
+
+app.use("/api/doctors/", availabilityRoutes);
+// app.post("/api/doctors/availability", Add_slots);
 
 // medicine Routes information releated
 // app.use("/api/medicine", medicineRoutes);

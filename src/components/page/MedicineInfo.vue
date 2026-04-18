@@ -368,7 +368,7 @@ async function fetchMedicineInfo(searchName: string) {
   const key = searchName.trim().toLowerCase()
 
   try {
-    const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+    const baseURL = 'http://localhost:3000'
     const res = await axios.post(`${baseURL}/api/medicine`, {
       medicineName: key
     })

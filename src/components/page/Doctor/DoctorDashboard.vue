@@ -1,490 +1,307 @@
-<!-- src/components/page/doctorDashboard.vue -->
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0b1120] relative overflow-hidden">
-    <!-- Animated background orbs -->
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-20 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-[130px] animate-float-slow"></div>
-      <div class="absolute bottom-20 left-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-[150px] animate-float-slower"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-cyan-500/5 rounded-full blur-[200px] animate-pulse-slow"></div>
-    </div>
+  <div class="min-h-screen flex flex-col bg-gradient-to-br from-[#f8fafc] via-[#eff6ff] to-[#eef2ff]">
+    <NavBar />
 
-    <!-- Grid pattern -->
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 0 L30 60 M0 30 L60 30\' stroke=\'rgba(255,255,255,0.03)\' stroke-width=\'0.5\' /%3E%3C/svg%3E\')] opacity-30"></div>
-
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <!-- Header -->
-      <div class="mb-8">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          <div class="flex items-center gap-4">
-            <div class="relative">
-              <div class="absolute inset-0 bg-purple-400/30 rounded-full blur-md"></div>
-              <div class="relative w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/30">
-                <StethoscopeIcon class="w-7 h-7 text-white" />
-              </div>
-            </div>
+    <main class="flex-1 p-4 md:p-6 lg:p-8">
+      <div class="max-w-7xl mx-auto space-y-6 md:space-y-8">
+        
+        <!-- Header Section with Glass Effect -->
+        <div class="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl shadow-xl border border-white/50 p-6">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 via-transparent to-transparent rounded-full -mr-16 -mt-16 blur-3xl"></div>
+          <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-purple-100 to-indigo-100 bg-clip-text text-transparent">
-                Doctor Dashboard
-              </h1>
-              <p class="text-gray-400 mt-1">Welcome back, <span class="text-purple-300 font-medium">{{ doctor.name }}</span></p>
-            </div>
-          </div>
-          <div class="flex items-center gap-6">
-            <div class="hidden md:flex items-center gap-2 text-sm">
-              <div class="flex items-center gap-1.5">
+              <div class="flex items-center gap-2 text-sm font-medium">
                 <span class="relative flex h-2 w-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                <span class="text-gray-300">Online</span>
+                <span class="bg-gradient-to-r from-primary to-indigo-500 bg-clip-text text-transparent">Welcome back, Dr. {{ doctorName }}</span>
               </div>
-              <span class="text-gray-500">|</span>
-              <span class="text-gray-400">Last sync: {{ lastSync }}</span>
+              <h1 class="text-3xl md:text-4xl font-bold mt-1">
+                <span class="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Doctor Dashboard</span>
+              </h1>
+              <p class="text-gray-500 mt-1 flex items-center gap-1">
+                <Calendar class="w-4 h-4 text-primary/70" />
+                {{ formattedDate }} • Manage appointments & patient data
+              </p>
             </div>
-            <div class="relative">
-              <div class="absolute inset-0 bg-cyan-400/30 rounded-full blur-md"></div>
-              <div class="relative w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                <UserIcon class="w-6 h-6 text-white" />
+            <div class="flex items-center gap-3">
+              <button class="p-2.5 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all border border-white">
+                <Bell class="w-5 h-5 text-gray-600" />
+              </button>
+              <button class="p-2.5 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all border border-white">
+                <Settings class="w-5 h-5 text-gray-600" />
+              </button>
+              <div class="flex items-center gap-3 bg-white/90 backdrop-blur-sm rounded-full pl-3 pr-2 py-1 shadow-md border border-white/50">
+                <div class="flex flex-col items-end">
+                  <span class="text-xs font-semibold text-gray-700">Dr. {{ doctorName }}</span>
+                  <span class="text-xs text-primary/80">{{ specialization }}</span>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-white font-semibold shadow-inner">
+                  {{ initials }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <StatCard
-          title="Today's Appointments"
-          :value="todayAppointments.length"
-          :subvalue="`${upcomingAppointmentsCount} upcoming`"
-          icon="calendar"
-          color="purple"
-          :trend="appointmentTrend"
-        />
-        <StatCard
-          title="Pending Lab Results"
-          :value="pendingLabs.length"
-          subvalue="Review needed"
-          icon="activity"
-          color="blue"
-        />
-        <StatCard
-          title="Unread Messages"
-          :value="unreadMessages"
-          :subvalue="`${totalMessages} total`"
-          icon="message"
-          color="green"
-        />
-        <StatCard
-          title="Patients Online"
-          :value="onlinePatients"
-          subvalue="Active now"
-          icon="users"
-          color="teal"
-          :pulse="true"
-        />
-      </div>
+        <!-- Stats Cards – Glassmorphism + Hover Lift -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div v-for="stat in statsCards" :key="stat.label" 
+               class="group relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl shadow-md border border-white/50 p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:bg-white/80">
+            <div class="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative flex items-start justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-500">{{ stat.label }}</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ stat.value }}</p>
+                <p v-if="stat.trend" class="text-xs font-medium mt-2 flex items-center gap-1" :class="stat.trendColorClass">
+                  <TrendingUpIcon v-if="stat.trend.includes('+')" class="w-3 h-3" />
+                  {{ stat.trend }}
+                </p>
+              </div>
+              <div :class="['w-12 h-12 rounded-xl flex items-center justify-center shadow-inner transition-all group-hover:scale-110', stat.iconBgClass]">
+                <component :is="stat.icon" :class="['w-6 h-6', stat.iconColorClass]" />
+              </div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+          </div>
+        </div>
 
-      <!-- Main Tabs -->
-      <div class="space-y-6">
-        <!-- Tab Navigation -->
-        <div class="flex border-b border-white/10 overflow-x-auto">
-          <button
-            v-for="tab in tabs"
-            :key="tab.value"
-            @click="selectedTab = tab.value"
-            class="relative px-6 py-3 text-sm font-medium transition-colors duration-200 whitespace-nowrap"
-            :class="selectedTab === tab.value ? 'text-cyan-300' : 'text-gray-400 hover:text-gray-200'"
-          >
-            <span class="flex items-center gap-2">
-              <component :is="tab.icon" class="w-4 h-4" />
-              {{ tab.label }}
-              <span v-if="tab.badge" class="ml-1.5 px-1.5 py-0.5 rounded-full text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                {{ tab.badge }}
+        <!-- Main Tabs – Elegant Card with Depth -->
+        <div class="rounded-2xl bg-white/60 backdrop-blur-xl shadow-xl border border-white/50 overflow-hidden">
+          <!-- Tab Navigation -->
+          <div class="flex items-center border-b border-white/40 overflow-x-auto scrollbar-hide px-4 bg-gradient-to-r from-white/30 to-transparent">
+            <button
+              v-for="tab in tabs"
+              :key="tab.value"
+              @click="activeTab = tab.value"
+              class="group relative px-6 py-4 text-sm font-medium transition-all duration-300 whitespace-nowrap"
+              :class="activeTab === tab.value ? 'text-primary' : 'text-gray-500 hover:text-gray-700'"
+            >
+              <span class="flex items-center gap-2">
+                <component :is="tab.icon" class="w-4 h-4 transition-transform group-hover:scale-110" />
+                {{ tab.label }}
+                <span v-if="tab.badge" class="ml-1.5 px-1.5 py-0.5 rounded-full text-xs bg-primary/20 text-primary font-semibold backdrop-blur-sm">
+                  {{ tab.badge }}
+                </span>
               </span>
-            </span>
-            <span
-              v-if="selectedTab === tab.value"
-              class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-400 to-cyan-400"
-            ></span>
-          </button>
-        </div>
-
-        <!-- Tab Content -->
-        <Transition name="fade-slide" mode="out-in">
-          <div :key="selectedTab">
-            <!-- Appointments Tab -->
-            <div v-if="selectedTab === 'appointments'" class="space-y-4">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 class="text-xl font-semibold text-white">Today's Schedule</h2>
-                <div class="flex gap-3">
-                  <button class="group relative px-4 py-2 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 hover:bg-white/10 transition-all">
-                    <span class="flex items-center gap-2">
-                      <FilterIcon class="w-4 h-4" />
-                      Filter
-                    </span>
-                  </button>
-                  <button
-                    @click="openScheduleModal"
-                    class="group relative px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-sm font-medium text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 hover:scale-105"
-                  >
-                    <span class="flex items-center gap-2">
-                      <CalendarIcon class="w-4 h-4" />
-                      New Appointment
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              <div class="grid gap-4">
-                <div
-                  v-for="appt in todayAppointments"
-                  :key="appt.id"
-                  class="group bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-5 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300"
-                >
-                  <div class="flex flex-col md:flex-row justify-between items-start gap-4">
-                    <div class="flex items-start gap-4">
-                      <div class="relative">
-                        <div class="absolute inset-0 bg-purple-400/20 rounded-full blur-md"></div>
-                        <div class="relative w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
-                          <span class="text-white font-semibold">{{ appt.time.split(' ')[0] }}</span>
-                        </div>
-                      </div>
-                      <div>
-                        <h3 class="font-semibold text-lg text-white">{{ appt.type }}</h3>
-                        <p class="text-gray-300">{{ appt.patientName }}</p>
-                        <p class="text-sm text-gray-400 mt-1 flex items-center gap-1">
-                          <ClockIcon class="w-3 h-3" />
-                          {{ appt.time }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="flex flex-col items-end gap-2">
-                      <span
-                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border"
-                        :class="
-                          appt.status === 'Upcoming'
-                            ? 'bg-green-500/20 text-green-300 border-green-500/30'
-                            : 'bg-gray-500/20 text-gray-300 border-gray-500/30'
-                        "
-                      >
-                        {{ appt.status }}
-                      </span>
-                      <div class="flex gap-2">
-                        <button
-                          v-if="appt.status === 'Upcoming'"
-                          @click="startVideoCall(appt)"
-                          class="px-3 py-1.5 text-xs rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all flex items-center gap-1"
-                        >
-                          <VideoIcon class="w-3 h-3" />
-                          Start Call
-                        </button>
-                        <button class="px-3 py-1.5 text-xs rounded-lg bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 transition-colors">
-                          Details
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Patients Tab -->
-            <div v-if="selectedTab === 'patients'" class="space-y-4">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 class="text-xl font-semibold text-white">My Patients</h2>
-                <div class="relative w-full sm:w-64">
-                  <SearchIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    v-model="patientSearch"
-                    type="text"
-                    placeholder="Search patients..."
-                    class="w-full pl-10 pr-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl text-gray-200 placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div class="grid gap-4">
-                <div
-                  v-for="patient in filteredPatients"
-                  :key="patient.id"
-                  class="group bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-4 hover:bg-white/10 hover:border-cyan-500/30 transition-all"
-                >
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                      <div class="relative">
-                        <div class="absolute inset-0 bg-cyan-400/20 rounded-full blur-md"></div>
-                        <div class="relative w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                          <UserIcon class="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                      <div>
-                        <h3 class="font-semibold text-white">{{ patient.name }}</h3>
-                        <p class="text-sm text-gray-400">{{ patient.age }} yrs • {{ patient.gender }}</p>
-                      </div>
-                    </div>
-                    <div class="flex gap-2">
-                      <button
-                        @click="openPatientModal(patient)"
-                        class="px-3 py-1.5 text-xs rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all"
-                      >
-                        View Profile
-                      </button>
-                    </div>
-                  </div>
-                  <!-- Quick health summary -->
-                  <div class="mt-3 pt-3 border-t border-white/10 grid grid-cols-3 gap-2 text-xs">
-                    <div class="text-gray-400">Last Visit: <span class="text-gray-300">{{ patient.lastVisit }}</span></div>
-                    <div class="text-gray-400">Next Appt: <span class="text-gray-300">{{ patient.nextAppointment || 'None' }}</span></div>
-                    <div class="text-gray-400">Condition: <span class="text-cyan-300">{{ patient.primaryCondition }}</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Lab Results Tab -->
-            <div v-if="selectedTab === 'labs'" class="space-y-4">
-              <div class="flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-white">Pending Lab Results</h2>
-                <button class="px-4 py-2 text-sm rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 transition-colors">
-                  View All
-                </button>
-              </div>
-
-              <div class="grid gap-4">
-                <div
-                  v-for="lab in pendingLabs"
-                  :key="lab.id"
-                  class="group bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-5 hover:bg-white/10 hover:border-blue-500/30 transition-all"
-                >
-                  <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
-                    <div class="flex items-start gap-3">
-                      <div class="p-2 rounded-lg bg-blue-500/20">
-                        <ActivityIcon class="w-5 h-5 text-blue-400" />
-                      </div>
-                      <div>
-                        <h3 class="font-semibold text-white">{{ lab.testName }}</h3>
-                        <p class="text-sm text-gray-400">{{ lab.patientName }}</p>
-                        <p class="text-xs text-gray-500 mt-1">Ordered: {{ lab.orderedDate }}</p>
-                      </div>
-                    </div>
-                    <div class="flex gap-2">
-                      <button
-                        @click="reviewLab(lab)"
-                        class="px-4 py-2 text-sm rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
-                      >
-                        Review Results
-                      </button>
-                      <button class="px-3 py-2 text-sm rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10">
-                        <DownloadIcon class="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Messages Tab -->
-            <div v-if="selectedTab === 'messages'" class="space-y-4">
-              <h2 class="text-xl font-semibold text-white">Inbox</h2>
-              <div class="grid gap-4">
-                <div
-                  v-for="msg in messages"
-                  :key="msg.id"
-                  class="group bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-5 hover:bg-white/10 transition-all cursor-pointer"
-                  :class="{ 'border-l-4 border-l-cyan-500': !msg.read }"
-                  @click="openMessage(msg)"
-                >
-                  <div class="flex items-start justify-between">
-                    <div class="flex items-start gap-4">
-                      <div class="relative">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center">
-                          <MessageSquareIcon class="w-5 h-5 text-white" />
-                        </div>
-                        <span v-if="!msg.read" class="absolute -top-1 -right-1 w-3 h-3 bg-cyan-500 rounded-full border-2 border-slate-900"></span>
-                      </div>
-                      <div>
-                        <h3 class="font-semibold text-white">{{ msg.subject }}</h3>
-                        <p class="text-sm text-gray-400">From: {{ msg.from }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ msg.preview }}</p>
-                      </div>
-                    </div>
-                    <div class="text-right">
-                      <span class="text-xs text-gray-500">{{ msg.timeAgo }}</span>
-                      <div class="mt-2">
-                        <button class="px-3 py-1 text-xs rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10">
-                          Reply
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <span
+                v-if="activeTab === tab.value"
+                class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-indigo-500 rounded-t-full shadow-sm"
+              ></span>
+            </button>
           </div>
-        </Transition>
+
+          <!-- Tab Content -->
+          <div class="p-6">
+            <Transition name="fade-slide" mode="out-in">
+              <div :key="activeTab">
+                <!-- Appointments Tab -->
+                <div v-if="activeTab === 'appointments'" class="space-y-5">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h2 class="text-xl font-semibold text-gray-800">Today's Schedule</h2>
+                      <p class="text-sm text-gray-500 mt-0.5">Your upcoming appointments</p>
+                    </div>
+                    <button class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all hover:scale-105">
+                      + New Appointment
+                    </button>
+                  </div>
+                  <div class="grid gap-3">
+                    <div v-for="appt in appointments" :key="appt.id" 
+                         class="group flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
+                      <div class="flex items-center gap-4">
+                        <div class="relative">
+                          <div class="absolute inset-0 bg-primary/20 rounded-full blur-sm group-hover:blur-md transition-all"></div>
+                          <div class="relative w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-indigo-100 flex items-center justify-center text-primary font-semibold text-sm border border-white/50">
+                            {{ appt.initials || appt.patientName.charAt(0) }}
+                          </div>
+                        </div>
+                        <div>
+                          <h3 class="font-semibold text-gray-800">{{ appt.patientName }}</h3>
+                          <p class="text-sm text-gray-500">{{ appt.type }} • {{ appt.time }}</p>
+                        </div>
+                      </div>
+                      <span :class="getStatusBadgeClass(appt.status)">{{ appt.status }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Patients Tab -->
+                <div v-else-if="activeTab === 'patients'" class="space-y-5">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h2 class="text-xl font-semibold text-gray-800">My Patients</h2>
+                      <p class="text-sm text-gray-500 mt-0.5">Recently visited patients</p>
+                    </div>
+                    <button class="text-sm text-primary font-medium hover:underline">View All</button>
+                  </div>
+                  <div class="grid gap-3">
+                    <div v-for="patient in recentPatients" :key="patient.id" 
+                         class="flex items-center gap-4 bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
+                      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-200 to-indigo-100 flex items-center justify-center font-semibold text-indigo-700 text-sm shadow-inner">
+                        {{ patient.initials }}
+                      </div>
+                      <div class="flex-1">
+                        <h3 class="font-medium text-gray-800">{{ patient.name }}</h3>
+                        <p class="text-xs text-gray-500">{{ patient.lastVisit }} • {{ patient.condition }}</p>
+                      </div>
+                      <button class="text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors">
+                        <ChevronRight class="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Availability Tab -->
+                <div v-else-if="activeTab === 'availability'" class="space-y-2">
+                  <AvailabilityManager :doctorId="doctorId" />
+                </div>
+
+                <!-- Lab Results Tab -->
+                <div v-else-if="activeTab === 'labs'" class="space-y-5">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h2 class="text-xl font-semibold text-gray-800">Pending Lab Results</h2>
+                      <p class="text-sm text-gray-500 mt-0.5">Results waiting for review</p>
+                    </div>
+                    <button class="text-sm text-primary font-medium hover:underline">View All</button>
+                  </div>
+                  <div class="grid gap-3">
+                    <div v-for="lab in pendingLabs" :key="lab.id" 
+                         class="flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
+                      <div>
+                        <h3 class="font-medium text-gray-800">{{ lab.testName }}</h3>
+                        <p class="text-sm text-gray-500">{{ lab.patientName }}</p>
+                      </div>
+                      <button class="px-4 py-2 text-sm rounded-lg bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors backdrop-blur-sm">
+                        Review
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Messages Tab -->
+                <div v-else-if="activeTab === 'messages'" class="space-y-5">
+                  <div>
+                    <h2 class="text-xl font-semibold text-gray-800">Inbox</h2>
+                    <p class="text-sm text-gray-500 mt-0.5">Unread messages from patients</p>
+                  </div>
+                  <div class="grid gap-3">
+                    <div v-for="msg in messages" :key="msg.id" 
+                         class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all cursor-pointer">
+                      <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                          <h3 class="font-medium text-gray-800">{{ msg.subject }}</h3>
+                          <p class="text-sm text-gray-500">From: {{ msg.from }}</p>
+                          <p class="text-xs text-gray-400 mt-1 line-clamp-1">{{ msg.preview }}</p>
+                        </div>
+                        <span class="text-xs text-gray-400 ml-4">{{ msg.timeAgo }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useAuthStore } from '../../../stores/auth'
+import NavBar from '../../page/NavBar.vue'
+import AvailabilityManager from '../AvailabilityManger/Availablity.vue'
 import {
-  User as UserIcon,
-  Calendar as CalendarIcon,
-  Activity as ActivityIcon,
-  MessageSquare as MessageSquareIcon,
-  Users as UserCheckIcon,
-  Stethoscope as StethoscopeIcon,
-  Clock as ClockIcon,
-  Video as VideoIcon,
-  Filter as FilterIcon,
-  Search as SearchIcon,
-  Download as DownloadIcon,
-  TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon
+  Calendar, Clock, Users, FileText, Stethoscope, Bell, Settings,
+  ChevronRight, MessageCircle, TrendingUp
 } from 'lucide-vue-next'
 
-// StatCard component defined inline for simplicity
-const StatCard = {
-  props: ['title', 'value', 'subvalue', 'icon', 'color', 'trend', 'pulse'],
-  template: `
-    <div class="group relative bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5 transition-all duration-300 hover:bg-white/10" :class="\`hover:border-\${color}-500/30\`">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-medium text-gray-300">{{ title }}</h3>
-        <component :is="iconComponent" class="w-5 h-5" :class="\`text-\${color}-400\`" />
-      </div>
-      <div>
-        <p class="text-3xl font-bold text-white">{{ value }}</p>
-        <p class="text-xs text-gray-500 mt-1">{{ subvalue }}</p>
-        <div class="mt-3 flex items-center gap-2">
-          <span v-if="trend" class="inline-flex items-center text-xs" :class="trend > 0 ? 'text-green-400' : 'text-red-400'">
-            <component :is="trend > 0 ? TrendingUpIcon : TrendingDownIcon" class="w-3 h-3 mr-0.5" />
-            {{ Math.abs(trend) }}%
-          </span>
-          <span v-if="pulse" class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-        </div>
-      </div>
-    </div>
-  `,
-  computed: {
-    iconComponent() {
-      const icons = {
-        calendar: CalendarIcon,
-        activity: ActivityIcon,
-        message: MessageSquareIcon,
-        users: UserCheckIcon
-      }
-      return icons[this.icon] || ActivityIcon
-    }
-  }
-}
+const authStore = useAuthStore()
 
-const router = useRouter()
+const doctorName = computed(() => {
+  const user = authStore.user
+  return user ? `${user.firstName} ${user.lastName}` : 'Emily Carter'
+})
 
-// Mock data
-const doctor = ref({ name: 'Emily Carter', id: 42 })
-const lastSync = ref('just now')
+const doctorId = computed(() => authStore.user?._id || '69df6aa3d7ce10ea2bdc80ff')
+const specialization = computed(() => authStore.user?.specialization || 'Cardiology')
+const initials = computed(() => doctorName.value.split(' ').map(n => n[0]).join('').toUpperCase())
 
-const todayAppointments = ref([
-  { id: 1, type: 'Consultation', patientName: 'John Doe', time: '09:30 AM', status: 'Upcoming', roomId: 'room-101' },
-  { id: 2, type: 'Follow‑up', patientName: 'Anna Smith', time: '11:00 AM', status: 'Completed', roomId: 'room-102' },
-  { id: 3, type: 'Physical Exam', patientName: 'Mark Lee', time: '02:15 PM', status: 'Upcoming', roomId: 'room-103' },
-  { id: 4, type: 'Telemedicine', patientName: 'Sarah Johnson', time: '04:00 PM', status: 'Upcoming', roomId: 'room-104' }
+const tabs = [
+  { value: 'appointments', label: 'Appointments', icon: Calendar },
+  { value: 'patients', label: 'Patients', icon: Users },
+  { value: 'availability', label: 'Availability', icon: Clock },
+  { value: 'labs', label: 'Lab Results', icon: FileText },
+  { value: 'messages', label: 'Messages', icon: MessageCircle, badge: '3' }
+]
+
+const activeTab = ref('appointments')
+
+const appointments = ref([
+  { id: 1, patientName: 'Emily Rodriguez', type: 'Follow-up', time: '09:00 AM', status: 'Confirmed', initials: 'ER' },
+  { id: 2, patientName: 'Michael Chen', type: 'Consultation', time: '10:30 AM', status: 'Confirmed', initials: 'MC' },
+])
+
+const recentPatients = ref([
+  { id: 1, name: 'Olivia Martinez', initials: 'OM', lastVisit: '2 days ago', condition: 'Hypertension' },
+  { id: 2, name: 'James Wilson', initials: 'JW', lastVisit: '3 days ago', condition: 'Diabetes' },
 ])
 
 const pendingLabs = ref([
-  { id: 101, testName: 'Complete Blood Count (CBC)', patientName: 'John Doe', orderedDate: '2024-01-20' },
-  { id: 102, testName: 'Lipid Panel', patientName: 'Anna Smith', orderedDate: '2024-01-21' },
-  { id: 103, testName: 'HbA1c', patientName: 'Mark Lee', orderedDate: '2024-01-19' }
+  { id: 1, testName: 'CBC', patientName: 'John Doe' },
+  { id: 2, testName: 'Lipid Panel', patientName: 'Anna Smith' },
 ])
 
 const messages = ref([
-  { id: 201, subject: 'Prescription refill request', from: 'John Doe', preview: 'I need a refill for my blood pressure medication...', timeAgo: '2h ago', read: false },
-  { id: 202, subject: 'Lab result question', from: 'Anna Smith', preview: 'Can you explain my recent cholesterol results?', timeAgo: '5h ago', read: false },
-  { id: 203, subject: 'Appointment reschedule', from: 'Mark Lee', preview: 'I need to change my appointment to next week...', timeAgo: '1d ago', read: true }
+  { id: 1, subject: 'Prescription refill request', from: 'John Doe', preview: 'I need a refill...', timeAgo: '2h ago' },
+  { id: 2, subject: 'Lab result question', from: 'Anna Smith', preview: 'Can you explain...', timeAgo: '5h ago' },
+  { id: 3, subject: 'Appointment reschedule', from: 'Mark Lee', preview: 'I need to change...', timeAgo: '1d ago' },
 ])
 
-const patients = ref([
-  { id: 301, name: 'John Doe', age: 45, gender: 'Male', lastVisit: '2024-01-15', nextAppointment: '2024-01-28', primaryCondition: 'Hypertension' },
-  { id: 302, name: 'Anna Smith', age: 32, gender: 'Female', lastVisit: '2024-01-10', nextAppointment: '2024-02-05', primaryCondition: 'Hyperlipidemia' },
-  { id: 303, name: 'Mark Lee', age: 28, gender: 'Male', lastVisit: '2024-01-18', nextAppointment: null, primaryCondition: 'Type 2 Diabetes' }
+const formattedDate = computed(() => new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))
+
+const statsCards = computed(() => [
+  { label: 'Today\'s Appointments', value: 8, trend: '+2 from yesterday', icon: Calendar, iconBgClass: 'bg-primary/20 backdrop-blur-sm', iconColorClass: 'text-primary', trendColorClass: 'text-green-600' },
+  { label: 'New Patients', value: 3, trend: 'This week', icon: Users, iconBgClass: 'bg-emerald-100/50', iconColorClass: 'text-emerald-600', trendColorClass: 'text-emerald-600' },
+  { label: 'Pending Reports', value: 12, trend: '4 need review', icon: FileText, iconBgClass: 'bg-amber-100/50', iconColorClass: 'text-amber-600', trendColorClass: 'text-amber-600' },
+  { label: 'Upcoming Surgeries', value: 2, trend: 'This week', icon: Stethoscope, iconBgClass: 'bg-blue-100/50', iconColorClass: 'text-blue-600', trendColorClass: 'text-blue-600' },
 ])
 
-const onlinePatients = ref(7)
-
-const upcomingAppointmentsCount = computed(() => todayAppointments.value.filter(a => a.status === 'Upcoming').length)
-const appointmentTrend = ref(12) // positive trend
-const totalMessages = computed(() => messages.value.length)
-const unreadMessages = computed(() => messages.value.filter(m => !m.read).length)
-
-const selectedTab = ref('appointments')
-const patientSearch = ref('')
-
-const filteredPatients = computed(() => {
-  const term = patientSearch.value.toLowerCase()
-  return patients.value.filter(p => p.name.toLowerCase().includes(term))
-})
-
-const tabs = [
-  { value: 'appointments', label: 'Appointments', icon: CalendarIcon, badge: upcomingAppointmentsCount.value || null },
-  { value: 'patients', label: 'Patients', icon: UserCheckIcon },
-  { value: 'labs', label: 'Lab Results', icon: ActivityIcon, badge: pendingLabs.value.length },
-  { value: 'messages', label: 'Messages', icon: MessageSquareIcon, badge: unreadMessages.value || null }
-]
-
-// Actions
-function startVideoCall(appointment) {
-  // Generate or use existing roomId
-  const roomId = appointment.roomId || `appt-${appointment.id}-${Date.now()}`
-  router.push(`/call/${roomId}`)
-}
-
-function openScheduleModal() {
-  // Implement modal logic
-  console.log('Open schedule modal')
-}
-
-function openPatientModal(patient) {
-  // Navigate to patient detail or open modal
-  console.log('View patient:', patient)
-}
-
-function reviewLab(lab) {
-  console.log('Review lab:', lab)
-}
-
-function openMessage(msg) {
-  console.log('Open message:', msg)
-  // Mark as read
-  msg.read = true
+const getStatusBadgeClass = (status: string) => {
+  return status === 'Confirmed' ? 'text-xs px-3 py-1 rounded-full bg-green-100/80 text-green-700 font-medium backdrop-blur-sm border border-green-200' : 'text-xs px-3 py-1 rounded-full bg-yellow-100/80 text-yellow-700 font-medium backdrop-blur-sm border border-yellow-200'
 }
 </script>
 
 <style scoped>
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-20px) scale(1.05); }
-}
-@keyframes float-slower {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(20px) scale(0.95); }
-}
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.1); }
-}
-.animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
-.animate-float-slower { animation: float-slower 12s ease-in-out infinite; }
-.animate-pulse-slow { animation: pulse-slow 6s ease-in-out infinite; }
-
 .fade-slide-enter-active,
-.fade-slide-leave-active { transition: all 0.3s ease; }
-.fade-slide-enter-from { opacity: 0; transform: translateY(8px); }
-.fade-slide-leave-to { opacity: 0; transform: translateY(-8px); }
+.fade-slide-leave-active {
+  transition: all 0.25s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 </style>

@@ -8,6 +8,7 @@ export const doctorService = {
     const response = await axios.get(" http://localhost:3000/api/doctors", {
       params,
     });
+    console.log(response);
     return response.data;
   },
   async getDoctorSlots(doctorId, date) {

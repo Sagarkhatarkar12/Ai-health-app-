@@ -311,8 +311,8 @@
               <div class="grid grid-cols-3 gap-2">
                 <button v-for="slot in availableSlots" :key="slot.startTime" @click="selectedSlot = slot"
                   class="px-3 py-2 text-sm rounded-lg border transition-all" :class="selectedSlot?.startTime === slot.startTime
-                      ? 'bg-cyan-500/30 border-cyan-500 text-white'
-                      : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                    ? 'bg-cyan-500/30 border-cyan-500 text-white'
+                    : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
                     ">
                   {{ slot.startTime }}
                 </button>
@@ -347,7 +347,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '../../../stores/auth'
-import {doctorService} from "../../../services/doctorService"
+import { doctorService } from "../../../services/doctorService"
 // import doctorService from '../../../services/doctorService'
 // import appointmentService from '../../../services/appointmentService'
 import { useRouter } from 'vue-router'
@@ -446,14 +446,17 @@ const debouncedFetchDoctors = () => {
 async function fetchDoctors() {
   loadingDoctors.value = true
   try {
+
     console.log("Fetching doctor here ...")
     const params = {}
     // console.log(params)
     console.log(selectedSpecialization.value);
-    if (selectedSpecialization.value) params.specialization = selectedSpecialization.value
-    if (searchQuery.value) params.search = searchQuery.value
+
+    if (selectedSpecialization.value) params.specialization = selectedSpecialization.value;
+    if (searchQuery.value) params.search = searchQuery.value;
     const res = await doctorService.getDoctor(params)
-    doctors.value = res.data || []
+    console.log(res.doctors);
+    doctors.value = res.doctors || []
   } catch (e) {
     console.error('Failed to fetch doctors:', e)
     doctors.value = []
@@ -489,7 +492,10 @@ async function fetchSlots() {
   if (!selectedDoctor.value || !selectedDate.value) return
   loadingSlots.value = true
   try {
+    // console.log("Fetch slots")
     const res = await doctorService.getDoctorSlots(selectedDoctor.value._id, selectedDate.value)
+
+
     availableSlots.value = res.data || []
   } catch (e) {
     console.error('Failed to fetch slots:', e)
@@ -503,6 +509,7 @@ async function bookAppointment() {
   if (!selectedDoctor.value || !selectedSlot.value) return
   bookingInProgress.value = true
   try {
+    console.log("book APpointment")
     await appointmentService.bookAppointment({
       doctorId: selectedDoctor.value._id,
       appointmentDate: selectedDate.value,
@@ -527,9 +534,11 @@ const loadingAppointments = ref(false)
 
 async function fetchPatientAppointments() {
   loadingAppointments.value = true
+  console.log("fetchPatien")
   try {
     const res = await appointmentService.getPatientAppointments()
     patientAppointments.value = res.data || []
+    // consol.log(res)
   } catch (e) {
     console.error('Failed to fetch appointments:', e)
   } finally {

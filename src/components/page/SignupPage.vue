@@ -451,12 +451,14 @@ const handleSubmit = async () => {
 
   try {
     const payload: any = {
+      
       role: role.value,
       firstName: form.firstName,
       lastName: form.lastName,
       email: form.email,
       password: form.password,
       phoneNumber: form.phoneNumber,
+
     }
 
     if (role.value === 'doctor') {

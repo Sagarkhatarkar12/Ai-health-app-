@@ -6,11 +6,12 @@ const mongoose = require("mongoose");
 // GET SLOTS
 const getDoctorSlots = async (req, res) => {
   try {
-    console.log("Hiii");
+    console.log(req.query);
+
     const doctorId = req.user._id;
     const { date } = req.query;
 
-    console.log(doctorId);
+    // console.log(doctorId);
     console.log(`Request received for doctorId: ${doctorId}, date: ${date}`);
     // 1. Validate required parameters
     if (!date) {
@@ -51,6 +52,7 @@ const getDoctorSlots = async (req, res) => {
       appointmentDate: { $gte: queryDate, $lt: nextDay },
       status: { $in: ["pending", "confirmed"] },
     }).select("timeSlot.startTime");
+
     const bookedTimes = bookAppointments.map((a) => a.timeSlot.startTime);
     // 6. Filter out booked slots
     const availableSlots = availability.slots.filter(
@@ -63,13 +65,17 @@ const getDoctorSlots = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
 // ----------------adding sloting according doctor choice logic here
 const Add_slots = async (req, res) => {
   try {
+    console.log("Request receive in avalibility Controller " + req.body);
     const doctorId = req.user._id;
     console.log(doctorId);
+
     let slot = [];
     console.log(req.body);
+
     const { date } = req.body;
     slot = req.body.slots;
 
@@ -101,6 +107,7 @@ const Add_slots = async (req, res) => {
       status: "success",
       data: req.body,
     });
+
   } catch (error) {
     console.log("Error " + error);
   }

@@ -137,7 +137,7 @@ const registerUser = async (req, res) => {
     } catch (error) {
       console.log("error" + error);
     }
-
+   
     // Generate JWT (use user._id)
     const token = jwt.sign(
       {

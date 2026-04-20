@@ -492,11 +492,13 @@ async function fetchSlots() {
   if (!selectedDoctor.value || !selectedDate.value) return
   loadingSlots.value = true
   try {
-    // console.log("Fetch slots")
+    console.log("Fetch slots")
+    console.log(selectDoctor)
     const res = await doctorService.getDoctorSlots(selectedDoctor.value._id, selectedDate.value)
+    console.log(res.slots)
 
 
-    availableSlots.value = res.data || []
+    availableSlots.value = res.slots || []
   } catch (e) {
     console.error('Failed to fetch slots:', e)
     availableSlots.value = []

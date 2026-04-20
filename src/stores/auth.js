@@ -24,7 +24,7 @@ export const useAuthStore = defineStore("auth", {
         this.user = response.data.user;
         localStorage.setItem("token", this.token);
         api.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
-        console.log(response);
+        console.log("Response hai apna "+response);
         // this.user = response.user;
         console.log(this.user);
         // router.push("/patient/dashboard");

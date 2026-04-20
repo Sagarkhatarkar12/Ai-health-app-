@@ -11,7 +11,7 @@ const {
 } = require("./controllers/availabilityController");
 // appointment se releated logic here
 const Appointment = require("../server/models/Appointment");
-const Doctor = require("./models/doctor")
+const Doctor = require("./models/doctor");
 
 const authRoutes = require("./routes/authRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
@@ -72,16 +72,16 @@ app.post("/api/login", loginUser);
 
 app.get("/api/doctors", async (req, res) => {
   try {
- const query = {};
-  console.log("doctors api");
-  const { search, specialization } = req.query;
-  // console.log(search, specialization);
+    const query = {};
+    console.log("doctors api");
+    const { search, specialization } = req.query;
+    // console.log(search, specialization);
 
-     if (search) {
+    if (search) {
       query.$or = [
         { firstName: { $regex: search, $options: "i" } },
         { lastName: { $regex: search, $options: "i" } },
-        { specialization: { $regex: search, $options: "i" } }
+        { specialization: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -89,20 +89,76 @@ app.get("/api/doctors", async (req, res) => {
     if (specialization) {
       query.specialization = { $regex: specialization, $options: "i" };
     }
-    
-      const doctors = await Doctor.find(query)
-      .select("firstName lastName specialization experience rating consultationFee profileImage")
+
+    const doctors = await Doctor.find(query)
+      .select(
+        "firstName lastName specialization experience rating consultationFee profileImage",
+      )
       .limit(30); // pagination placeholder
-console.log(doctors);
- res.status(200).json({
+    console.log(doctors);
+    res.status(200).json({
       success: true,
       count: doctors.length,
-      doctors
+      doctors,
     });
-
-
   } catch (error) {
     console.log(error);
+  }
+});
+
+app.get("/avl/doctors/:doctorId/slots", async (req, res) => {
+  try {
+    console.log(req.query);
+    const doctorId = req.params.doctorId;
+    const date = req.query.date;
+
+    console.log("APi DOCTOR RUNNING HERE");
+    if (!doctorId || !date) {
+      return res.status(400).json({
+        success: false,
+        message: "doctorId and date are required",
+      });
+    }
+
+    // ✅ Convert date → start & end of day
+    const start = new Date(`${date}T00:00:00.000Z`);
+    const end = new Date(`${date}T23:59:59.999Z`);
+
+    console.log("DoctorId from API:", doctorId);
+    console.log("Date from API:", date);
+    console.log("Start:", start);
+    console.log("End:", end);
+    const userId = await Doctor.findOne({
+      _id : doctorId
+    });
+    console.log(userId.userId);
+    const D_userId = userId.userId;
+
+
+    const availability = await Availability.findOne({
+      doctorId: new mongoose.Types.ObjectId(D_userId),
+      date: { $gte: start, $lte: end },
+    });
+
+    console.log("Availbality " + availability);
+    if (!availability) {
+      return res.status(200).json({
+        success: true,
+        slots: [],
+      });
+    }
+    res.status(200).json({
+      success: true,
+      doctorId,
+      date,
+      slots: availability.slots,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 });
 
@@ -111,8 +167,6 @@ console.log(doctors);
 app.use("/api/doctors/", availabilityRoutes);
 // app.post("/api/doctors/availability", Add_slots);
 
-// medicine Routes information releated
-// app.use("/api/medicine", medicineRoutes);
 
 // server code is here
 const StartServer = async () => {

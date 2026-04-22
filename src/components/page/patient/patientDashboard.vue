@@ -349,7 +349,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '../../../stores/auth'
 import { doctorService } from "../../../services/doctorService"
 // import doctorService from '../../../services/doctorService'
-// import appointmentService from '../../../services/appointmentService'
+import { appointmentService } from '../../../services/appointmentService'
 import { useRouter } from 'vue-router'
 import {
   User as UserIcon,
@@ -449,7 +449,7 @@ async function fetchDoctors() {
 
     console.log("Fetching doctor here ...")
     const params = {}
-    // console.log(params)
+
     console.log(selectedSpecialization.value);
 
     if (selectedSpecialization.value) params.specialization = selectedSpecialization.value;
@@ -511,7 +511,7 @@ async function bookAppointment() {
   if (!selectedDoctor.value || !selectedSlot.value) return
   bookingInProgress.value = true
   try {
-    console.log("book APpointment")
+    console.log("book Appointment")
     await appointmentService.bookAppointment({
       doctorId: selectedDoctor.value._id,
       appointmentDate: selectedDate.value,
@@ -539,8 +539,9 @@ async function fetchPatientAppointments() {
   console.log("fetchPatien")
   try {
     const res = await appointmentService.getPatientAppointments()
-    patientAppointments.value = res.data || []
-    // consol.log(res)
+    console.log(res)
+    patientAppointments.value = res.data.appointments || []
+
   } catch (e) {
     console.error('Failed to fetch appointments:', e)
   } finally {

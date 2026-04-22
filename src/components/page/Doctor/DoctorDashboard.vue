@@ -4,21 +4,27 @@
 
     <main class="flex-1 p-4 md:p-6 lg:p-8">
       <div class="max-w-7xl mx-auto space-y-6 md:space-y-8">
-        
+
         <!-- Header Section with Glass Effect -->
-        <div class="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl shadow-xl border border-white/50 p-6">
-          <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 via-transparent to-transparent rounded-full -mr-16 -mt-16 blur-3xl"></div>
+        <div
+          class="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl shadow-xl border border-white/50 p-6">
+          <div
+            class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 via-transparent to-transparent rounded-full -mr-16 -mt-16 blur-3xl">
+          </div>
           <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <div class="flex items-center gap-2 text-sm font-medium">
                 <span class="relative flex h-2 w-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                <span class="bg-gradient-to-r from-primary to-indigo-500 bg-clip-text text-transparent">Welcome back, Dr. {{ doctorName }}</span>
+                <span class="bg-gradient-to-r from-primary to-indigo-500 bg-clip-text text-transparent">Welcome back,
+                  Dr. {{ doctorName }}</span>
               </div>
               <h1 class="text-3xl md:text-4xl font-bold mt-1">
-                <span class="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Doctor Dashboard</span>
+                <span class="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Doctor
+                  Dashboard</span>
               </h1>
               <p class="text-gray-500 mt-1 flex items-center gap-1">
                 <Calendar class="w-4 h-4 text-primary/70" />
@@ -26,18 +32,22 @@
               </p>
             </div>
             <div class="flex items-center gap-3">
-              <button class="p-2.5 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all border border-white">
+              <button
+                class="p-2.5 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all border border-white">
                 <Bell class="w-5 h-5 text-gray-600" />
               </button>
-              <button class="p-2.5 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all border border-white">
+              <button
+                class="p-2.5 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all border border-white">
                 <Settings class="w-5 h-5 text-gray-600" />
               </button>
-              <div class="flex items-center gap-3 bg-white/90 backdrop-blur-sm rounded-full pl-3 pr-2 py-1 shadow-md border border-white/50">
+              <div
+                class="flex items-center gap-3 bg-white/90 backdrop-blur-sm rounded-full pl-3 pr-2 py-1 shadow-md border border-white/50">
                 <div class="flex flex-col items-end">
                   <span class="text-xs font-semibold text-gray-700">Dr. {{ doctorName }}</span>
                   <span class="text-xs text-primary/80">{{ specialization }}</span>
                 </div>
-                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-white font-semibold shadow-inner">
+                <div
+                  class="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-indigo-500 flex items-center justify-center text-white font-semibold shadow-inner">
                   {{ initials }}
                 </div>
               </div>
@@ -47,48 +57,50 @@
 
         <!-- Stats Cards – Glassmorphism + Hover Lift -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div v-for="stat in statsCards" :key="stat.label" 
-               class="group relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl shadow-md border border-white/50 p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:bg-white/80">
-            <div class="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div v-for="stat in statsCards" :key="stat.label"
+            class="group relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl shadow-md border border-white/50 p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:bg-white/80">
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+            </div>
             <div class="relative flex items-start justify-between">
               <div>
                 <p class="text-sm font-medium text-gray-500">{{ stat.label }}</p>
                 <p class="text-3xl font-bold text-gray-800 mt-1">{{ stat.value }}</p>
-                <p v-if="stat.trend" class="text-xs font-medium mt-2 flex items-center gap-1" :class="stat.trendColorClass">
+                <p v-if="stat.trend" class="text-xs font-medium mt-2 flex items-center gap-1"
+                  :class="stat.trendColorClass">
                   <TrendingUpIcon v-if="stat.trend.includes('+')" class="w-3 h-3" />
                   {{ stat.trend }}
                 </p>
               </div>
-              <div :class="['w-12 h-12 rounded-xl flex items-center justify-center shadow-inner transition-all group-hover:scale-110', stat.iconBgClass]">
+              <div
+                :class="['w-12 h-12 rounded-xl flex items-center justify-center shadow-inner transition-all group-hover:scale-110', stat.iconBgClass]">
                 <component :is="stat.icon" :class="['w-6 h-6', stat.iconColorClass]" />
               </div>
             </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+            <div
+              class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent">
+            </div>
           </div>
         </div>
 
         <!-- Main Tabs – Elegant Card with Depth -->
         <div class="rounded-2xl bg-white/60 backdrop-blur-xl shadow-xl border border-white/50 overflow-hidden">
           <!-- Tab Navigation -->
-          <div class="flex items-center border-b border-white/40 overflow-x-auto scrollbar-hide px-4 bg-gradient-to-r from-white/30 to-transparent">
-            <button
-              v-for="tab in tabs"
-              :key="tab.value"
-              @click="activeTab = tab.value"
+          <div
+            class="flex items-center border-b border-white/40 overflow-x-auto scrollbar-hide px-4 bg-gradient-to-r from-white/30 to-transparent">
+            <button v-for="tab in tabs" :key="tab.value" @click="activeTab = tab.value"
               class="group relative px-6 py-4 text-sm font-medium transition-all duration-300 whitespace-nowrap"
-              :class="activeTab === tab.value ? 'text-primary' : 'text-gray-500 hover:text-gray-700'"
-            >
+              :class="activeTab === tab.value ? 'text-primary' : 'text-gray-500 hover:text-gray-700'">
               <span class="flex items-center gap-2">
                 <component :is="tab.icon" class="w-4 h-4 transition-transform group-hover:scale-110" />
                 {{ tab.label }}
-                <span v-if="tab.badge" class="ml-1.5 px-1.5 py-0.5 rounded-full text-xs bg-primary/20 text-primary font-semibold backdrop-blur-sm">
+                <span v-if="tab.badge"
+                  class="ml-1.5 px-1.5 py-0.5 rounded-full text-xs bg-primary/20 text-primary font-semibold backdrop-blur-sm">
                   {{ tab.badge }}
                 </span>
               </span>
-              <span
-                v-if="activeTab === tab.value"
-                class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-indigo-500 rounded-t-full shadow-sm"
-              ></span>
+              <span v-if="activeTab === tab.value"
+                class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-indigo-500 rounded-t-full shadow-sm"></span>
             </button>
           </div>
 
@@ -97,35 +109,69 @@
             <Transition name="fade-slide" mode="out-in">
               <div :key="activeTab">
                 <!-- Appointments Tab -->
-                <div v-if="activeTab === 'appointments'" class="space-y-5">
-                  <div class="flex justify-between items-center">
-                    <div>
-                      <h2 class="text-xl font-semibold text-gray-800">Today's Schedule</h2>
-                      <p class="text-sm text-gray-500 mt-0.5">Your upcoming appointments</p>
-                    </div>
-                    <button class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all hover:scale-105">
-                      + New Appointment
-                    </button>
-                  </div>
-                  <div class="grid gap-3">
-                    <div v-for="appt in appointments" :key="appt.id" 
-                         class="group flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
-                      <div class="flex items-center gap-4">
-                        <div class="relative">
-                          <div class="absolute inset-0 bg-primary/20 rounded-full blur-sm group-hover:blur-md transition-all"></div>
-                          <div class="relative w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-indigo-100 flex items-center justify-center text-primary font-semibold text-sm border border-white/50">
-                            {{ appt.initials || appt.patientName.charAt(0) }}
-                          </div>
-                        </div>
-                        <div>
-                          <h3 class="font-semibold text-gray-800">{{ appt.patientName }}</h3>
-                          <p class="text-sm text-gray-500">{{ appt.type }} • {{ appt.time }}</p>
-                        </div>
-                      </div>
-                      <span :class="getStatusBadgeClass(appt.status)">{{ appt.status }}</span>
-                    </div>
-                  </div>
-                </div>
+               <!-- Appointments Tab -->
+<div v-if="activeTab === 'appointments'" class="space-y-5">
+  <div class="flex justify-between items-center">
+    <div>
+      <h2 class="text-xl font-semibold text-gray-800">Today's Schedule</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Your upcoming appointments</p>
+    </div>
+    <button
+      class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all hover:scale-105">
+      + New Appointment
+    </button>
+  </div>
+
+  <!-- Loading & Empty States -->
+  <!-- <div v-if="loading.appointments" class="text-center py-8 text-gray-500">
+    Loading appointments...
+  </div>
+  <div v-else-if="appointments.length === 0" class="text-center py-8 text-gray-500">
+    No appointments found.
+  </div> -->
+
+  <!-- Appointments List -->
+  <div class="grid gap-3">
+    <div v-for="appt in appointments" :key="appt.id"
+      class="group flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
+      
+      <!-- Left: Avatar + Details -->
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <div class="absolute inset-0 bg-primary/20 rounded-full blur-sm group-hover:blur-md transition-all"></div>
+          <div
+            class="relative w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-indigo-100 flex items-center justify-center text-primary font-semibold text-sm border border-white/50">
+            {{ appt.patientId?.email?.charAt(0) || appt.patientName?.charAt(0) || 'P' }}
+          </div>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-800">{{ appt.patientId?.email || appt.patientName }}</h3>
+          <p class="text-sm text-gray-500">{{ appt.type || 'Consultation' }} • {{ appt.time || '--:--' }}</p>
+        </div>
+      </div>
+
+      <!-- Right: Status Badge + Action Buttons (if pending) -->
+      <div class="flex items-center gap-3">
+        <!-- Status Badge -->
+        <span :class="getStatusBadgeClass(appt.status)">{{ appt.status }}</span>
+
+        <!-- Accept / Reject Buttons (only for pending) -->
+        <div v-if="appt.status?.toLowerCase() === 'pending'" class="flex gap-2">
+          <button
+            @click="handleAccept(appt)"
+            class="px-3 py-1.5 text-xs rounded-lg bg-green-100/80 text-green-700 font-medium hover:bg-green-200/80 transition-all backdrop-blur-sm border border-green-200 shadow-sm hover:shadow">
+            Accept
+          </button>
+          <button
+            @click="handleReject(appt)"
+            class="px-3 py-1.5 text-xs rounded-lg bg-red-100/80 text-red-700 font-medium hover:bg-red-200/80 transition-all backdrop-blur-sm border border-red-200 shadow-sm hover:shadow">
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
                 <!-- Patients Tab -->
                 <div v-else-if="activeTab === 'patients'" class="space-y-5">
@@ -137,9 +183,10 @@
                     <button class="text-sm text-primary font-medium hover:underline">View All</button>
                   </div>
                   <div class="grid gap-3">
-                    <div v-for="patient in recentPatients" :key="patient.id" 
-                         class="flex items-center gap-4 bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
-                      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-200 to-indigo-100 flex items-center justify-center font-semibold text-indigo-700 text-sm shadow-inner">
+                    <div v-for="patient in recentPatients" :key="patient.id"
+                      class="flex items-center gap-4 bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
+                      <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-200 to-indigo-100 flex items-center justify-center font-semibold text-indigo-700 text-sm shadow-inner">
                         {{ patient.initials }}
                       </div>
                       <div class="flex-1">
@@ -168,13 +215,14 @@
                     <button class="text-sm text-primary font-medium hover:underline">View All</button>
                   </div>
                   <div class="grid gap-3">
-                    <div v-for="lab in pendingLabs" :key="lab.id" 
-                         class="flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
+                    <div v-for="lab in pendingLabs" :key="lab.id"
+                      class="flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
                       <div>
                         <h3 class="font-medium text-gray-800">{{ lab.testName }}</h3>
                         <p class="text-sm text-gray-500">{{ lab.patientName }}</p>
                       </div>
-                      <button class="px-4 py-2 text-sm rounded-lg bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors backdrop-blur-sm">
+                      <button
+                        class="px-4 py-2 text-sm rounded-lg bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors backdrop-blur-sm">
                         Review
                       </button>
                     </div>
@@ -188,8 +236,8 @@
                     <p class="text-sm text-gray-500 mt-0.5">Unread messages from patients</p>
                   </div>
                   <div class="grid gap-3">
-                    <div v-for="msg in messages" :key="msg.id" 
-                         class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all cursor-pointer">
+                    <div v-for="msg in messages" :key="msg.id"
+                      class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all cursor-pointer">
                       <div class="flex items-start justify-between">
                         <div class="flex-1">
                           <h3 class="font-medium text-gray-800">{{ msg.subject }}</h3>
@@ -211,6 +259,7 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '../../../stores/auth'
 import NavBar from '../../page/NavBar.vue'
@@ -219,6 +268,7 @@ import {
   Calendar, Clock, Users, FileText, Stethoscope, Bell, Settings,
   ChevronRight, MessageCircle, TrendingUp
 } from 'lucide-vue-next'
+import { appointmentService } from "../../../services/appointmentService"
 
 const authStore = useAuthStore()
 
@@ -274,6 +324,55 @@ const statsCards = computed(() => [
 const getStatusBadgeClass = (status: string) => {
   return status === 'Confirmed' ? 'text-xs px-3 py-1 rounded-full bg-green-100/80 text-green-700 font-medium backdrop-blur-sm border border-green-200' : 'text-xs px-3 py-1 rounded-full bg-yellow-100/80 text-yellow-700 font-medium backdrop-blur-sm border border-yellow-200'
 }
+// ========== Accept / Reject Handlers ==========
+const handleAccept = async(appt: any) => {
+  console.log("✅ Accept clicked for:", appt)
+  // TODO: Call API to update status to 'confirmed'
+  // Example: await appointmentService.updateStatus(appt.id, 'confirmed')
+  // alert(`Accept appointment for ${appt.patientId?.email || appt.patientName}?`)
+   try {
+    await appointmentService.updateAppointmentStatus(appt._id, 'confirmed');
+    // Refresh list
+    fetchAppointments();
+    alert("Appointment confirmed");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to accept");
+  }
+}
+
+const handleReject = async(appt: any) => {
+  console.log("❌ Reject clicked for:", appt)
+  // TODO: Call API to update status to 'cancelled'
+  // alert(`Reject appointment for ${appt.patientId?.email || appt.patientName}?`)
+   try {
+    await appointmentService.updateAppointmentStatus(appt._id, 'cancelled');
+    fetchAppointments();
+    alert("Appointment cancelled");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to reject");
+  }
+}
+
+// fetch appointment request 
+const fetchAppointments = async () => {
+  const res = await appointmentService.getDoctorAppointments();
+  appointments.value = res.appointments;
+  console.log(res)
+
+}
+
+
+
+// 👇 MAIN LOGIC
+watch(activeTab, (newTab) => {
+  console.log("Tab changed:", newTab);
+
+  if (newTab === "appointments") {
+    fetchAppointments();
+  }
+});
 </script>
 
 <style scoped>
@@ -281,10 +380,12 @@ const getStatusBadgeClass = (status: string) => {
 .fade-slide-leave-active {
   transition: all 0.25s ease;
 }
+
 .fade-slide-enter-from {
   opacity: 0;
   transform: translateY(8px);
 }
+
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateY(-8px);
@@ -293,6 +394,7 @@ const getStatusBadgeClass = (status: string) => {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

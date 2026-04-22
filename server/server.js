@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const availabilityRoutes = require("./routes/availabilityRoutes");
 // Availability se releated logic here
+const protect = require("./middleware/authMiddleware");
 const Availability = require("./models/Available");
 const {
   getDoctorSlots,
@@ -129,11 +130,10 @@ app.get("/avl/doctors/:doctorId/slots", async (req, res) => {
     console.log("Start:", start);
     console.log("End:", end);
     const userId = await Doctor.findOne({
-      _id : doctorId
+      _id: doctorId,
     });
     console.log(userId.userId);
     const D_userId = userId.userId;
-
 
     const availability = await Availability.findOne({
       doctorId: new mongoose.Types.ObjectId(D_userId),
@@ -147,6 +147,7 @@ app.get("/avl/doctors/:doctorId/slots", async (req, res) => {
         slots: [],
       });
     }
+
     res.status(200).json({
       success: true,
       doctorId,
@@ -162,11 +163,172 @@ app.get("/avl/doctors/:doctorId/slots", async (req, res) => {
   }
 });
 
+// appointment dikhana patient dashboard
+app.get("/api/appointments/patient", protect, async (req, res) => {
+  try {
+    console.log("User ID:", req.user._id);
+    const appointments = await Appointment.find({
+      patientId: req.user._id,
+    }).populate("doctorId");
+
+    console.log(appointments);
+    res.status(200).json({
+      success: true,
+      appointments,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(200).json({
+      success: true,
+      appointments,
+    });
+  }
+});
+
+// appointment me doctor dashboard;
+app.get("/api/appointments/doctor", protect, async (req, res) => {
+  try {
+    // console.log("User ID:", req.user._id);
+    const doctorId = req.user._id;
+    console.log("Doctor Id from API " + doctorId);
+    const userId = await Doctor.findOne({
+      userId: doctorId,
+    });
+
+    // console.log(userId);
+    const D_userId = userId;
+
+    const appointments = await Appointment.find({
+      doctorId: D_userId,
+    }).populate("patientId");
+    console.log("PATIENT ID " + appointments.patientId);
+    console.log(appointments);
+    res.status(200).json({
+      success: true,
+      appointments,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// booking wala system yha se
+app.post("/api/appointments", protect, async (req, res) => {
+  console.log(req.body);
+  try {
+    const { doctorId, appointmentDate, timeSlot, type, symptoms } = req.body;
+
+    // ----- Validation -----
+    if (
+      !doctorId ||
+      !appointmentDate ||
+      !timeSlot ||
+      !timeSlot.startTime ||
+      !timeSlot.endTime
+    ) {
+      return res.status(400).json({
+        error:
+          "Missing required fields: doctorId, appointmentDate, timeSlot.startTime, timeSlot.endTime",
+      });
+    }
+    // Convert appointmentDate from "YYYY-MM-DD" to Date object (UTC midnight)
+    const parsedDate = new Date(appointmentDate);
+    if (isNaN(parsedDate.getTime())) {
+      return res.status(400).json({ error: "Invalid appointmentDate" });
+    }
+    const existing = await Appointment.findOne({
+      doctorId,
+      appointmentDate,
+      "timeSlot.startTime": timeSlot.startTime,
+      "timeSlot.endTime": timeSlot.endTime,
+      status: { $ne: "cancelled" }, // ignore cancelled appointments
+    });
+
+    if (existing) {
+      return res.status(409).json({
+        error: "This time slot is already booked for this doctor on that date",
+      });
+    }
+
+    const newAppointment = new Appointment({
+      doctorId,
+      patientId: req.user._id,
+      appointmentDate: parsedDate,
+      timeSlot: {
+        startTime: timeSlot.startTime,
+        endTime: timeSlot.endTime,
+      },
+      type: type || "video",
+      symptoms: symptoms || "",
+      status: "pending", // default
+      paymentStatus: "pending", // default
+      // amount: calculate from doctor's fee if needed
+    });
+
+    await newAppointment.save();
+
+    // ----- Optionally update the timeSlot.isBooked flag in a separate TimeSlots collection -----
+    // If you maintain a TimeSlot model, you can do:
+    // await TimeSlot.findByIdAndUpdate(timeSlot._id, { isBooked: true });
+
+    res.status(201).json({
+      message: "Appointment booked successfully",
+      appointment: newAppointment,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// edit wala opitons
+app.patch("/api/appointments/:id/status", protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body; // 'confirmed' or 'cancelled'
+    const doctorId = req.user._id;
+    console.log("req mil gai hai "+req.body);
+
+    // Validation
+    if (!status || !["confirmed", "cancelled"].includes(status)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid status. Use 'confirmed' or 'cancelled'." });
+    }
+console.log(`ID ${id} and doctorId ${doctorId}`)
+    // Find appointment and verify doctor owns it
+    const appointment = await Appointment.findOne({ _id: id });
+    console.log("Appointment "+appointment);
+    if (!appointment) {
+      return res
+        .status(404)
+        .json({ error: "Appointment not found or unauthorized" });
+    }
+
+    // Optional: only allow update if current status is 'pending'
+    if (appointment.status !== "pending") {
+      return res
+        .status(400)
+        .json({ error: "Appointment is no longer pending" });
+    }
+
+    // Update status
+    appointment.status = status;
+    await appointment.save();
+
+    // Optional: if status is 'cancelled', you might want to free up the timeslot
+    // (e.g., set isBooked=false in a separate TimeSlot collection)
+
+    res.json({ success: true, message: `Appointment ${status}`, appointment });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // Availablity logic here
 
 app.use("/api/doctors/", availabilityRoutes);
 // app.post("/api/doctors/availability", Add_slots);
-
 
 // server code is here
 const StartServer = async () => {

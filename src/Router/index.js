@@ -1,50 +1,41 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import VideoCall from '../components/page/VIdeoCalling/videoCall.vue'
-import Home from '../components/page/Home.vue';
-// import PatientDashboard from './pages/PatientDashboard.vue'
-import patient from "../components/page/PatientDashboard.vue"
-import Login from "../components/page/LoginPage.vue"
-// import DoctorDashboard from '../components/page/doctorDashboard.vue'
-import signup from '../components/page/SignupPage.vue'
-// import DoctorLogin from './pages/DoctorLogin.vue'
-// import NotFound from './pages/NotFound.vue'
-import patientDashboard  from "../components/page/patient/patientDashboard.vue"
-// import DoctorDashboard from "../components/page/Doctor/DoctorDashboard.vue"
-import DoctorDashboard from "../components/page/Doctor/DoctorDashboard.vue"
-import ayurvedic from "../components/page/ayurvedic.vue"
+import { createRouter, createWebHistory } from "vue-router";
+import VideoCall from "../components/page/VIdeoCalling/videoCall.vue";
+import Home from "../components/page/Home.vue";
+import patient from "../components/page/medicine/medicineSearch.vue";
+import Login from "../components/page/auth/LoginPage.vue";
+import signup from "../components/page/auth/SignupPage.vue";
+import patientDashboard from "../components/page/patient/patientDashboard.vue";
+import DoctorDashboard from "../components/page/Doctor/DoctorDashboard.vue";
+import ayurvedic from "../components/page/ayurvedic.vue";
+import { useAuthStore } from "../stores/auth";
 // import PatientLogin from './pages/PatientLogin.vue'
 const routes = [
-
   {
-    path: '/login',
-    name: 'Login',
+    path: "/login",
+    name: "Login",
     // component: () => import('./components/auth/Login.vue')
-    component:Login
-
+    component: Login,
   },
-   
+
   {
     path: "/call/:roomId",
     name: "VideoCall",
     component: VideoCall,
   },
   {
-    path: '/',
-    name: 'Home',
-    component: Home
-
-  },
-    {
-    path: '/patient',
-    name: 'patient',
-    component:patient
-
+    path: "/",
+    name: "Home",
+    component: Home,
   },
   {
-    path: '/api/register',
-    name: 'reigster',
-    component: signup
-
+    path: "/medicine-search",
+    name: "patient",
+    component: patient,
+  },
+  {
+    path: "/api/register",
+    name: "reigster",
+    component: signup,
   },
   // {
   //   path: '/signup',
@@ -52,31 +43,41 @@ const routes = [
   //   component: signup
   // },
   {
-    path:'/patient/dashboard',
-    name:"PatientDashboard",
-    component:patientDashboard
-
-  }
-  ,{
-    path:'/doctor/dashboard',
-    name:"DoctorDashboard",
-    component:DoctorDashboard
-
+    path: "/patient/dashboard",
+    name: "PatientDashboard",
+    component: patientDashboard,
   },
   {
- path:'/ayurvedic-chatbot',
- name:"AyurvedicChatbot",
- component:ayurvedic,
-  }
-
-
+    path: "/doctor/dashboard",
+    name: "DoctorDashboard",
+    component: DoctorDashboard,
+  },
+  {
+    path: "/ayurvedic-chatbot",
+    name: "AyurvedicChatbot",
+    component: ayurvedic,
+  },
 
   // Baad mein dashboard routes add kar sakte ho
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
 
-export default router
+// ✅ Global navigation guard – yeh har route change se pehle chalta hai
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  const isAuthenticated = authStore.isAuthenticated; // or !!authStore.token
+  console.log(isAuthenticated);
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // Not logged in – redirect to login page and save the intended destination
+    next({ path: "/login", query: { redirect: to.fullPath } });
+  } else {
+    next(); // proceed
+  }
+});
+
+export default router;

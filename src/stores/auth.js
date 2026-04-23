@@ -16,15 +16,16 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     async login(email, password) {
       try {
+        console.log("login store");
         console.log(email, password);
         // alert(email);
-        const response = await api.post("/api/login", { email, password });
+        const response = await api.post("/api/auth/login", { email, password });
 
         this.token = response.data.token;
         this.user = response.data.user;
         localStorage.setItem("token", this.token);
         api.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
-        console.log("Response hai apna "+response);
+        console.log("Response hai apna " + response);
         // this.user = response.user;
         console.log(this.user);
         // router.push("/patient/dashboard");
@@ -37,7 +38,7 @@ export const useAuthStore = defineStore("auth", {
     async signUp(paylaod) {
       try {
         console.log("signUp store" + paylaod);
-        const response = await api.post("/api/register", { paylaod });
+        const response = await api.post("/api/auth/register", { paylaod });
         console.log(response);
       } catch (error) {
         console.log(error);

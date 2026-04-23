@@ -201,7 +201,7 @@ async function fetchAvailability() {
 
   loading.value = true
   try {
-    const response = await api.get(`/api/doctors/${props.doctorId}/slots`, {
+    const response = await api.get(`/api/avail/doctors/${props.doctorId}/slots`, {
       params: { date: selectedDate.value }
     })
     slots.value = response.data?.slots || []
@@ -282,7 +282,7 @@ async function saveAvailability() {
 
   saving.value = true
   try {
-    await api.post('http://localhost:3000/api/doctors/availability', {
+    await api.post('http://localhost:3000/api/avail/doctors/availability', {
       date: modalDate.value,
       slots: generatedSlots.value
     }

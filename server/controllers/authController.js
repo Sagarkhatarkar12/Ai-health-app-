@@ -17,7 +17,7 @@ const registerUser = async (req, res) => {
 
     const { role, firstName, lastName, email, password, phoneNumber } = data;
 
-    console.log(data);
+    // console.log(data);
 
     const patientData = data || {};
     const doctorData = data.doctor || {};
@@ -192,8 +192,8 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
-    console.log("email" + email, "password", password);
+    // console.log(req.body);
+    // console.log("email" + email, "password", password);
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -245,9 +245,9 @@ const loginUser = async (req, res) => {
     // get Profile data
     let profile = null;
     if (user.role === "patient") {
-      console.log("userid" + user._id);
+      // console.log("userid" + user._id);
       profile = await Patient.findOne({ userId: user._id });
-      console.log("profile :" + profile);
+      // console.log("profile :" + profile);
     } else if (user.role === "doctor") {
       profile = await Doctor.findOne({ userId: user._id });
     }

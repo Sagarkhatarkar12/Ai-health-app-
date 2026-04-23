@@ -363,7 +363,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { Stethoscope, Heart } from 'lucide-vue-next'
-import api from '../../services/api'
+import api from '../../../services/api'
 
 const router = useRouter()
 const role = ref<'doctor' | 'patient'>('patient')
@@ -489,7 +489,7 @@ const handleSubmit = async () => {
       if (form.doctor.identityProof) formData.append('identityProof', form.doctor.identityProof)
     }
 
-    const response = await api.post('/api/register', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    const response = await api.post('/api/auth/register', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
 
     if (response.data.success) {
       router.push({ path: '/login', query: { registered: 'true', role: role.value } })

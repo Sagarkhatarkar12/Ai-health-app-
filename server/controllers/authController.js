@@ -8,23 +8,23 @@ const cloudinary = require("../config/cloudinary");
 dotenv.config();
 
 const registerUser = async (req, res) => {
+  let data;
   try {
-    // console.log("Received registration data:", req.body);
-    const data = req.body.payload ? JSON.parse(req.body.payload) : req.body;
-    // const data = req.body.payload;
-    // console.log("Requet data "+req.body);
-    // console.log("data "+data);
+    if (typeof req.body.payload === "string") {
+      data = JSON.parse(req.body.payload);
+    } else {
+      data = req.body.payload;
+    }
 
     const { role, firstName, lastName, email, password, phoneNumber } = data;
-
-    // console.log(data);
 
     const patientData = data || {};
     const doctorData = data.doctor || {};
 
-    // console.log(data.patientData.dateOfBirth)
-    const profileImageFile = req.files?.profileImage?.[0];
-    const profileUrl = profileImageFile.path;
+    // const medicalLicense = req.files?.medicalLicense?.[0]?.path || null;
+    // const identityProof = req.files?.identityProof?.[0]?.path || null;
+    const profileUrl = req.files?.profileImage?.[0]?.path || null;
+    
 
     // Validate required fields
     if (!email || !password || !role) {
@@ -137,7 +137,7 @@ const registerUser = async (req, res) => {
     } catch (error) {
       console.log("error" + error);
     }
-   
+
     // Generate JWT (use user._id)
     const token = jwt.sign(
       {
@@ -167,21 +167,21 @@ const registerUser = async (req, res) => {
   } catch (error) {
     console.error("Registration error:", error);
 
-    if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern)[0];
-      return res.status(409).json({
-        success: false,
-        message: `${field} already exists.`,
-      });
-    }
+    //     if (error.code === 11000) {
+    //       const field = Object.keys(error.keyPattern)[0];
+    //       return res.status(409).json({
+    //         success: false,
+    //         message: `${field} already exists.`,
+    //       });
+    //     }
 
-    if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map((e) => e.message);
-      return res.status(400).json({
-        success: false,
-        message: messages.join(", "),
-      });
-    }
+    //     if (error.name === "ValidationError") {
+    //       const messages = Object.values(error.errors).map((e) => e.message);
+    //       return res.status(400).json({
+    //         success: false,
+    //         message: messages.join(", "),
+    //       });
+    //     }
 
     res.status(500).json({
       success: false,

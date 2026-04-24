@@ -45,7 +45,7 @@
 
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row items-center justify-center gap-5 animate-fade-in-up animation-delay-600">
-            <router-link to="/patient"
+            <router-link to="/patient/dashboard"
               class="group relative px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold text-lg shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105 overflow-hidden">
               <span class="absolute inset-0 bg-gradient-to-r from-cyan-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
               <span class="relative flex items-center gap-2">
@@ -54,7 +54,7 @@
               </span>
             </router-link>
 
-            <router-link to="/doctor"
+            <router-link to="/doctor/dashboard"
               class="group px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/20 text-white font-semibold text-lg hover:bg-white/10 hover:border-white/30 transition-all duration-300 hover:scale-105">
               <span class="flex items-center gap-2">
                 Doctor Dashboard

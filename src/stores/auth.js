@@ -18,7 +18,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         console.log("login store");
         console.log(email, password);
-        // alert(email);
+        
         const response = await api.post("/api/auth/login", { email, password });
 
         this.token = response.data.token;
@@ -37,9 +37,12 @@ export const useAuthStore = defineStore("auth", {
 
     async signUp(paylaod) {
       try {
-        console.log("signUp store" + paylaod);
-        const response = await api.post("/api/auth/register", { paylaod });
-        console.log(response);
+        console.log("signUp store");
+
+        const response = await api.post("/api/auth/register", paylaod, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        return response;
       } catch (error) {
         console.log(error);
       }

@@ -109,69 +109,64 @@
             <Transition name="fade-slide" mode="out-in">
               <div :key="activeTab">
                 <!-- Appointments Tab -->
-               <!-- Appointments Tab -->
-<div v-if="activeTab === 'appointments'" class="space-y-5">
-  <div class="flex justify-between items-center">
-    <div>
-      <h2 class="text-xl font-semibold text-gray-800">Today's Schedule</h2>
-      <p class="text-sm text-gray-500 mt-0.5">Your upcoming appointments</p>
-    </div>
-    <button
-      class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all hover:scale-105">
-      + New Appointment
-    </button>
-  </div>
+                <!-- Appointments Tab -->
+                <div v-if="activeTab === 'appointments'" class="space-y-5">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h2 class="text-xl font-semibold text-gray-800">Today's Schedule</h2>
+                      <p class="text-sm text-gray-500 mt-0.5">Your upcoming appointments</p>
+                    </div>
+                    <button
+                      class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all hover:scale-105">
+                      + New Appointment
+                    </button>
+                  </div>
 
-  <!-- Loading & Empty States -->
-  <!-- <div v-if="loading.appointments" class="text-center py-8 text-gray-500">
-    Loading appointments...
-  </div>
-  <div v-else-if="appointments.length === 0" class="text-center py-8 text-gray-500">
-    No appointments found.
-  </div> -->
 
-  <!-- Appointments List -->
-  <div class="grid gap-3">
-    <div v-for="appt in appointments" :key="appt.id"
-      class="group flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
-      
-      <!-- Left: Avatar + Details -->
-      <div class="flex items-center gap-4">
-        <div class="relative">
-          <div class="absolute inset-0 bg-primary/20 rounded-full blur-sm group-hover:blur-md transition-all"></div>
-          <div
-            class="relative w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-indigo-100 flex items-center justify-center text-primary font-semibold text-sm border border-white/50">
-            {{ appt.patientId?.email?.charAt(0) || appt.patientName?.charAt(0) || 'P' }}
-          </div>
-        </div>
-        <div>
-          <h3 class="font-semibold text-gray-800">{{ appt.patientId?.email || appt.patientName }}</h3>
-          <p class="text-sm text-gray-500">{{ appt.type || 'Consultation' }} • {{ appt.time || '--:--' }}</p>
-        </div>
-      </div>
 
-      <!-- Right: Status Badge + Action Buttons (if pending) -->
-      <div class="flex items-center gap-3">
-        <!-- Status Badge -->
-        <span :class="getStatusBadgeClass(appt.status)">{{ appt.status }}</span>
+                  <!-- Appointments List -->
+                  <div class="grid gap-3">
+                    <div v-for="appt in appointments" :key="appt.id"
+                      class="group flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
 
-        <!-- Accept / Reject Buttons (only for pending) -->
-        <div v-if="appt.status?.toLowerCase() === 'pending'" class="flex gap-2">
-          <button
-            @click="handleAccept(appt)"
-            class="px-3 py-1.5 text-xs rounded-lg bg-green-100/80 text-green-700 font-medium hover:bg-green-200/80 transition-all backdrop-blur-sm border border-green-200 shadow-sm hover:shadow">
-            Accept
-          </button>
-          <button
-            @click="handleReject(appt)"
-            class="px-3 py-1.5 text-xs rounded-lg bg-red-100/80 text-red-700 font-medium hover:bg-red-200/80 transition-all backdrop-blur-sm border border-red-200 shadow-sm hover:shadow">
-            Reject
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                      <!-- Left: Avatar + Details -->
+                      <div class="flex items-center gap-4">
+                        <div class="relative">
+                          <div
+                            class="absolute inset-0 bg-primary/20 rounded-full blur-sm group-hover:blur-md transition-all">
+                          </div>
+                          <div
+                            class="relative w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-indigo-100 flex items-center justify-center text-primary font-semibold text-sm border border-white/50">
+                            {{ appt.patientId?.email?.charAt(0) || appt.patientName?.charAt(0) || 'P' }}
+                          </div>
+                        </div>
+                        <div>
+                          <h3 class="font-semibold text-gray-800">{{ appt.patientId?.email || appt.patientName }}</h3>
+                          <p class="text-sm text-gray-500">{{ appt.type || 'Consultation' }} • {{ appt.time || '--:--'
+                            }}</p>
+                        </div>
+                      </div>
+
+                      <!-- Right: Status Badge + Action Buttons (if pending) -->
+                      <div class="flex items-center gap-3">
+                        <!-- Status Badge -->
+                        <span :class="getStatusBadgeClass(appt.status)">{{ appt.status }}</span>
+
+                        <!-- Accept / Reject Buttons (only for pending) -->
+                        <div v-if="appt.status?.toLowerCase() === 'pending'" class="flex gap-2">
+                          <button @click="handleAccept(appt)"
+                            class="px-3 py-1.5 text-xs rounded-lg bg-green-100/80 text-green-700 font-medium hover:bg-green-200/80 transition-all backdrop-blur-sm border border-green-200 shadow-sm hover:shadow">
+                            Accept
+                          </button>
+                          <button @click="handleReject(appt)"
+                            class="px-3 py-1.5 text-xs rounded-lg bg-red-100/80 text-red-700 font-medium hover:bg-red-200/80 transition-all backdrop-blur-sm border border-red-200 shadow-sm hover:shadow">
+                            Reject
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Patients Tab -->
                 <div v-else-if="activeTab === 'patients'" class="space-y-5">
@@ -271,13 +266,16 @@ import {
 import { appointmentService } from "../../../services/appointmentService"
 
 const authStore = useAuthStore()
+console.log(authStore.user)
 
 const doctorName = computed(() => {
   const user = authStore.user
-  return user ? `${user.firstName} ${user.lastName}` : 'Emily Carter'
+  return user ? user.profile.firstName: 'Emily Carter'
 })
 
-const doctorId = computed(() => authStore.user?._id || '69df6aa3d7ce10ea2bdc80ff')
+
+const doctorId = computed(() => authStore.user?._id || '69df6aa3d7ce10ea2bdc80ff');
+
 const specialization = computed(() => authStore.user?.specialization || 'Cardiology')
 const initials = computed(() => doctorName.value.split(' ').map(n => n[0]).join('').toUpperCase())
 
@@ -325,12 +323,12 @@ const getStatusBadgeClass = (status: string) => {
   return status === 'Confirmed' ? 'text-xs px-3 py-1 rounded-full bg-green-100/80 text-green-700 font-medium backdrop-blur-sm border border-green-200' : 'text-xs px-3 py-1 rounded-full bg-yellow-100/80 text-yellow-700 font-medium backdrop-blur-sm border border-yellow-200'
 }
 // ========== Accept / Reject Handlers ==========
-const handleAccept = async(appt: any) => {
+const handleAccept = async (appt: any) => {
   console.log("✅ Accept clicked for:", appt)
   // TODO: Call API to update status to 'confirmed'
   // Example: await appointmentService.updateStatus(appt.id, 'confirmed')
   // alert(`Accept appointment for ${appt.patientId?.email || appt.patientName}?`)
-   try {
+  try {
     await appointmentService.updateAppointmentStatus(appt._id, 'confirmed');
     // Refresh list
     fetchAppointments();
@@ -341,11 +339,11 @@ const handleAccept = async(appt: any) => {
   }
 }
 
-const handleReject = async(appt: any) => {
+const handleReject = async (appt: any) => {
   console.log("❌ Reject clicked for:", appt)
   // TODO: Call API to update status to 'cancelled'
   // alert(`Reject appointment for ${appt.patientId?.email || appt.patientName}?`)
-   try {
+  try {
     await appointmentService.updateAppointmentStatus(appt._id, 'cancelled');
     fetchAppointments();
     alert("Appointment cancelled");

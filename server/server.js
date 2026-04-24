@@ -50,7 +50,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 app.use(express.json());
 
-
 // store room-wise users
 app.use("/api/appointments", appointmentRoutes);
 
@@ -63,11 +62,6 @@ app.post("/api/ayurvedic", ayurvedicChat);
 
 // routes
 app.use("/api/auth", authRoutes);
-
-
-
-
-
 
 // server code is here
 const StartServer = async () => {

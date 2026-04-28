@@ -222,6 +222,7 @@
                       {{ appt.status }}
                     </span>
                   </div>
+
                   <div v-if="appt.status === 'confirmed' && appt.type === 'video'" class="mt-4">
                     <button @click="joinVideoCall(appt)"
                       class="px-4 py-2 text-sm rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
@@ -550,8 +551,9 @@ async function fetchPatientAppointments() {
 }
 
 function joinVideoCall(appt) {
-  if (appt.videoCallRoomId) {
-    router.push(`/call/${appt.videoCallRoomId}`)
+console.log(appt)
+  if (appt.roomId) {
+    router.push(`/call/${appt.roomId}`)
   } else {
     alert('No video room assigned yet.')
   }

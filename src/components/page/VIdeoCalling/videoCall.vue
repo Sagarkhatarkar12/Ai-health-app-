@@ -5,7 +5,8 @@
 
     <!-- Remote video area -->
     <div class="remote-video-container">
-      <video ref="remoteVideo" autoplay class="remote-video" />
+      <video ref="remoteVideo" autoplay playsinline class="remote-video"></video>
+      <!-- <video ref="remoteVideo" autoplay class="remote-video" /> -->
 
       <!-- Call info overlay (only during call) -->
       <div class="call-info" v-if="isCalling">
@@ -30,7 +31,8 @@
 
     <!-- Local video (always visible, draggable) -->
     <div class="local-video-wrapper" :class="{ minimized: !cameraOn }" :style="localVideoStyle" @mousedown="startDrag">
-      <video ref="localVideo" autoplay muted class="local-video" />
+      <!-- <video ref="localVideo" autoplay muted class="local-video" /> -->
+      <video ref="localVideo" autoplay muted playsinline class="local-video"></video>
       <div class="local-controls">
         <button @click="toggleCamera" class="icon-btn" :title="cameraOn ? 'Turn off' : 'Turn on'">
           <CameraIcon :size="16" />
@@ -112,10 +114,13 @@
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from "vue";
 import { io } from "socket.io-client";
 import SimplePeer from "simple-peer/simplepeer.min.js";
-import Chat from "./chat.vue"
-const currentUsername = ref("user_" + Math.floor(Math.random() * 1000));
+import Chat from "./chat.vue";
+import { useAuthStore } from "../../../stores/auth";
+const authStore = useAuthStore();
+
+const currentUsername = ref(authStore.user.profile.firstName);
 import { useRoute } from "vue-router";
-// --- Icons ---
+// // --- Icons ---
 
 import {
   PhoneIcon,
@@ -128,8 +133,8 @@ import {
   SettingsIcon,
   MessageCircleIcon,
 } from "lucide-vue-next";
-// --- Refs ---
-// all varibale jab inki value koi change hota automatic chnage
+// // --- Refs ---
+// // all varibale jab inki value koi change hota automatic chnage
 
 const route = useRoute();
 const currentRoom = computed(() => {
@@ -140,9 +145,9 @@ watch(
   (newRoom) => {
     console.log("Room ID:", newRoom);
   },
-  { immediate: true }
+  { immediate: true },
 );
-// const route = useRoute();
+
 const localVideo = ref(null);
 const remoteVideo = ref(null);
 const peer = ref(null);
@@ -151,25 +156,118 @@ const cameraOn = ref(true);
 const micOn = ref(true);
 const networkQuality = ref("good");
 const callDuration = ref("00:00");
-const showSettings = ref(false);
-const chatOpen = ref(false);
-const preferHighQuality = ref(true);
+// const showSettings = ref(false);
+// const chatOpen = ref(false);
+// const preferHighQuality = ref(true);
 const echoCancellation = ref(true);
 const cameras = ref([]);
 const selectedCamera = ref("");
 const toasts = ref([]);
-const chatMessage = ref("");
-const chatMessages = ref(null);
+// const chatMessage = ref("");
+// const chatMessages = ref(null);
 let callStartTime = null;
 let durationInterval = null;
 let qualityInterval = null;
 let previewStream = null; // store preview stream
 let currentCallStream = null;
-// console.log(currentRoom1.value)
+// // console.log(currentRoom1.value)
 
 const socket = io("http://localhost:3000"); // isse backend me request jati hai connection jamane ke liye
+// Place this right after socket = io(...)
+// ✅ RECEIVE SIGNAL
 
-// // --- Draggable local video ---
+socket.on("signal", (data) => {
+  if (peer.value) {
+    peer.value.signal(data);
+  } else {
+    console.warn("Received signal but no peer yet");
+  }
+});
+
+// ✅ INIT EVENT
+socket.on("init", ({ initiator }) => {
+  // Destroy any old peer (safety)
+  if (peer.value) {
+    peer.value.destroy();
+    peer.value = null;
+  }
+
+  peer.value = new SimplePeer({
+    initiator,
+    trickle: true,
+    config: {
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+    }
+    // No stream yet – we'll add it later
+  });
+  console.log("Successfully we create Peer..");
+  // Event LISTENER
+
+
+
+
+
+  // Signal farwarding 
+
+  peer.value.on("signal", (data) => {
+    console.log("Signal ", data);
+    socket.emit("signal", {
+      room: currentRoom.value,
+      data
+    });
+  });
+
+
+  // Remote Stream run here 
+
+  peer.value.on("stream", async (remoteStream) => {
+    await nextTick(); // 🔥 important
+    console.log("remote String stream  ", remoteStream);
+
+    if (remoteVideo.value) {
+      console.log(remoteVideo.value)
+      remoteVideo.value.srcObject = remoteStream;
+      console.log("✅ Remote video working");
+    } else {
+      console.error("❌ remoteVideo null");
+    }
+  });
+
+  // connected event 
+  peer.value.on("connect", () => {
+    console.log("🔥 Peer connected");
+    isCalling.value = true;
+    callStartTime = Date.now();
+    durationInterval = setInterval(updateTimer, 1000);
+    startQualityMonitoring();
+  });
+
+  // Peer disconnected close 
+  peer.value.on("close", () => {
+    console.log("❌ Peer closed");
+    endCall();
+  });
+
+
+  // Peer error
+  peer.value.on("error", (err) => {
+    console.error("💥 Peer error:", err);
+    addToast("Connection error", "error");
+    endCall();
+  });
+
+  // If local stream already exists (startCall was called earlier), add it now
+  if (currentCallStream) {
+    console.log("➕ Adding existing local stream to peer");
+    peer.value.addStream(currentCallStream);
+  }
+
+});
+
+
+
+
+// // // --- Draggable local video ---
 const localVideoPos = ref({ x: 20, y: window.innerHeight - 240 });
 const isDragging = ref(false);
 let dragOffset = { x: 0, y: 0 };
@@ -185,7 +283,7 @@ function updateBoundaries() {
   localVideoPos.value.y = Math.min(maxY, Math.max(10, localVideoPos.value.y));
 }
 
-// starting drag
+// // starting drag
 function startDrag(e) {
   if (e.target.closest(".icon-btn")) return;
   isDragging.value = true;
@@ -216,7 +314,7 @@ function stopDrag() {
 
 window.addEventListener("resize", updateBoundaries);
 
-// // --- Helper: Show toast ---
+// // // --- Helper: Show toast ---
 function addToast(message, type = "info") {
   const id = Date.now();
   toasts.value.push({ id, message, type });
@@ -225,7 +323,7 @@ function addToast(message, type = "info") {
   }, 3000);
 }
 
-// // --- Chat functionality ---
+// // // --- Chat functionality ---
 function sendMessage() {
   if (!isCalling.value) {
     addToast('Start a call to send messages', 'warning')
@@ -244,98 +342,61 @@ function sendMessage() {
   chatMessage.value = ''
 }
 
-// // --- Media & Call Logic ---
-
+// // // --- Media & Call Logic ---
 async function startCall() {
   if (isCalling.value) return;
+  console.log("Call starting...")
+
   try {
-    // Stop preview stream first
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    });
+    currentCallStream = stream;
+
+    // Stop preview
     if (previewStream) {
-      previewStream.getTracks().forEach((track) => track.stop());
+      previewStream.getTracks().forEach(t => t.stop());
       previewStream = null;
     }
-    // Get full stream for call
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: cameraOn.value,
-      audio: { echoCancellation: echoCancellation.value },
-    });
 
-    currentCallStream = stream;
-    localVideo.value.srcObject = stream;
-    // Room join  kar liya hai
+    if (localVideo.value) {
+      localVideo.value.srcObject = stream;
+    }
 
+    // Join the room so the server knows we’re ready
     socket.emit("join-room", {
       room: currentRoom.value,
-      username: "user1" + Math.random(100),
+      username: currentUsername.value
     });
-    // peer connection fir bej rhe hai
-    // const isInitiator = window.location.hash === "#1"; // test ke liye
 
+    // If the peer already exists (created by the init event), add the stream
+    if (peer.value) {
+      peer.value.addStream(stream);
+      // No need to set isCalling here – it will be set by peer.on('connect')
+    }
+    // Note: the server will eventually send 'init' and the peer will be created.
+    addToast('Call started', 'info')
+  } catch (err) {
+    console.error("Camera error:", err);
+    addToast("Could not access camera", "error");
   }
-  catch (err) {
-    addToast("Cannot access camera/mic", "error");
-    console.error(err);
-  }
-
-
-
-
-
-
 }
-// isme two room add hone logo me diffrence pata karte hai ki kaun client hai or kaun server hai 
-
-socket.on("init", ({ initiator }) => {
-
-  createPeer(initiator, currentCallStream);
-})
+// // isme two room add hone logo me diffrence pata karte hai ki kaun client hai or kaun server hai
 
 
-// creating peer  it is in video calling features
-async function createPeer(initiator, stream) {
-
-  // simple peer connection setup kar frontend se backend se
-
-  peer.value = new SimplePeer({
-    initiator: initiator,
-    stream: stream,
-    trickle: true,
-    config: { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] },
-  });
-  // 
-
-  console.log("Peer is connected");
-  // on signal me data ko bejta hai 
-  // sender 
 
 
-  peer.value.on("signal", (data) =>
-    socket.emit("signal", {
-      room: currentRoom.value,
-      data: data,
-    }),
-  );
 
-  //  SIGNAL RECEIVE
-  socket.off("signal"); // duplicate listener remove
-  socket.on("signal", (data) => {
-    peer.value.signal(data);
-  });
 
-  // Remote stream
-  peer.value.on("stream", (remoteStream) => {
-    remoteVideo.value.srcObject = remoteStream;
-  });
 
-  peer.value.on("error", (err) => addToast("Connection error", "error"));
-  isCalling.value = true;
-  callStartTime = Date.now();
-  durationInterval = setInterval(updateTimer, 1000);
-  startQualityMonitoring();
-  addToast("Call started", "success");
-}
 
-// end call 
+
+
+
+
+
+// end call
 function endCall() {
   socket.emit("leave-room", {
     room: currentRoom.value,
@@ -348,7 +409,9 @@ function endCall() {
     currentCallStream.getTracks().forEach(track => track.stop())
     currentCallStream = null
   }
+
   // Restore preview stream
+
   navigator.mediaDevices.getUserMedia({ video: cameraOn.value, audio: false })
     .then(stream => {
       previewStream = stream
@@ -362,7 +425,9 @@ function endCall() {
   callDuration.value = '00:00'
   addToast('Call ended', 'info')
 }
-// update timer 
+
+// update timer
+
 function updateTimer() {
   if (!callStartTime) return;
   const diff = Math.floor((Date.now() - callStartTime) / 1000);
@@ -464,21 +529,22 @@ function toggleFullscreen() {
   }
 }
 
-// // --- Get available cameras ---
+// // // --- Get available cameras ---
+
 async function getCameras() {
   const devices = await navigator.mediaDevices.enumerateDevices();
   cameras.value = devices.filter((d) => d.kind === "videoinput");
   if (cameras.value.length) selectedCamera.value = cameras.value[0].deviceId;
 }
 
-// // --- Preview camera on load ---
+// // // --- Preview camera on load ---
 async function initPreview() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: false,
+      audio: true,
     });
-    console.log(stream);
+    console.log("Init Program stream ..." + stream);
     previewStream = stream;
     if (localVideo.value) {
       localVideo.value.srcObject = stream;
@@ -490,6 +556,7 @@ async function initPreview() {
 }
 
 onMounted(async () => {
+  console.log("application mounted ...");
   await getCameras();
   await initPreview();
   updateBoundaries();

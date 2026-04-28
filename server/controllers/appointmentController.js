@@ -1,17 +1,25 @@
 const protect = require("../middleware/authMiddleware");
 const Appointment = require("../models/Appointment");
 const Doctor = require("../models/doctor");
+const Patient = require("../models/Patient");
+const { v4: uuidv4 } = require("uuid");
 
 // appointment dikhana patient dashboard
 const getPatientAppointments = async (req, res) => {
   try {
+    // console.log(req.params);
     console.log("getPatientAppointment...");
-    // console.log("User ID:", req.user._id);
+    console.log(req.user._id);
+    const patientFind = await Patient.findOne({
+      userId: req.user._id,
+    });
+    console.log(patientFind._id);
+    const patientId_here = patientFind._id;
+
     const appointments = await Appointment.find({
-      patientId: req.user._id,
+      patientId: patientId_here,
     }).populate("doctorId");
 
-    // console.log(appointments);
     res.status(200).json({
       success: true,
       appointments,
@@ -62,10 +70,19 @@ const appointmentBooking = async (req, res) => {
         error: "This time slot is already booked for this doctor on that date",
       });
     }
+    console.log("Doctor ID ", doctorId);
+    console.log("Request ID ", req.user._id);
+    
+    const patientId  = await Patient.findOne({
+      userId: req.user._id,
+    });
+    console.log("New patient ID",patientId)
+    const patientReal = patientId._id
+    
 
     const newAppointment = new Appointment({
       doctorId,
-      patientId: req.user._id,
+      patientId: patientId,
       appointmentDate: parsedDate,
       timeSlot: {
         startTime: timeSlot.startTime,
@@ -107,15 +124,14 @@ const getDoctorAppointment = async (req, res) => {
       userId: doctorId,
     });
 
-    // console.log(userId);
     const D_userId = userId;
 
     const appointments = await Appointment.find({
       doctorId: D_userId,
     }).populate("patientId");
-    // console.log("PATIENT ID " + appointments);
+    console.log("PATIENT ID " + appointments);
     // console.log(appointments);
-   
+
     res.status(200).json({
       success: true,
       appointments,
@@ -129,7 +145,7 @@ const getDoctorAppointment = async (req, res) => {
 const AppointAcceptReject = async (req, res) => {
   try {
     console.log("AppointAcceptReject...");
-    
+
     const { id } = req.params;
     const { status } = req.body; // 'confirmed' or 'cancelled'
     const doctorId = req.user._id;
@@ -160,6 +176,9 @@ const AppointAcceptReject = async (req, res) => {
 
     // Update status
     appointment.status = status;
+    if (status === "confirmed") {
+      appointment.roomId = uuidv4();
+    }
     await appointment.save();
 
     // Optional: if status is 'cancelled', you might want to free up the timeslot

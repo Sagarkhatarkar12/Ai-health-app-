@@ -122,10 +122,17 @@
                     </button>
                   </div>
 
-
+                  <!-- Loading & Empty States -->
+                  <!-- <div v-if="loading.appointments" class="text-center py-8 text-gray-500">
+    Loading appointments...
+  </div>
+  <div v-else-if="appointments.length === 0" class="text-center py-8 text-gray-500">
+    No appointments found.
+  </div> -->
 
                   <!-- Appointments List -->
                   <div class="grid gap-3">
+
                     <div v-for="appt in appointments" :key="appt.id"
                       class="group flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all">
 
@@ -141,17 +148,26 @@
                           </div>
                         </div>
                         <div>
-                          <h3 class="font-semibold text-gray-800">{{ appt.patientId?.email || appt.patientName }}</h3>
+                          <h3 class="font-semibold text-gray-800">{{ appt.patientName }}</h3>
                           <p class="text-sm text-gray-500">{{ appt.type || 'Consultation' }} • {{ appt.time || '--:--'
-                            }}</p>
+                          }}</p>
                         </div>
                       </div>
+                      
 
                       <!-- Right: Status Badge + Action Buttons (if pending) -->
                       <div class="flex items-center gap-3">
                         <!-- Status Badge -->
                         <span :class="getStatusBadgeClass(appt.status)">{{ appt.status }}</span>
-
+                        <!-- Video Call Button (always visible for non-cancelled appointments) -->
+                        <button v-if="appt.status?.toLowerCase() !== 'cancelled'" @click="startVideoCall(appt)"
+                          class="p-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md hover:scale-105 transition-all"
+                          title="Start Video Call">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </button>
                         <!-- Accept / Reject Buttons (only for pending) -->
                         <div v-if="appt.status?.toLowerCase() === 'pending'" class="flex gap-2">
                           <button @click="handleAccept(appt)"
@@ -264,20 +280,22 @@ import {
   ChevronRight, MessageCircle, TrendingUp
 } from 'lucide-vue-next'
 import { appointmentService } from "../../../services/appointmentService"
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const authStore = useAuthStore()
-console.log(authStore.user)
 
 const doctorName = computed(() => {
   const user = authStore.user
-  return user ? user.profile.firstName: 'Emily Carter'
+  console.log(user)
+  return user ? `${user.profile.firstName} ${user.profile.lastName}` : 'Emily Carter'
 })
 
-
-const doctorId = computed(() => authStore.user?._id || '69df6aa3d7ce10ea2bdc80ff');
-
+const doctorId = computed(() => authStore.user?._id || '69df6aa3d7ce10ea2bdc80ff')
 const specialization = computed(() => authStore.user?.specialization || 'Cardiology')
 const initials = computed(() => doctorName.value.split(' ').map(n => n[0]).join('').toUpperCase())
+
 
 const tabs = [
   { value: 'appointments', label: 'Appointments', icon: Calendar },
@@ -288,6 +306,7 @@ const tabs = [
 ]
 
 const activeTab = ref('appointments')
+// console.log(appointments);
 
 const appointments = ref([
   { id: 1, patientName: 'Emily Rodriguez', type: 'Follow-up', time: '09:00 AM', status: 'Confirmed', initials: 'ER' },
@@ -319,6 +338,15 @@ const statsCards = computed(() => [
   { label: 'Upcoming Surgeries', value: 2, trend: 'This week', icon: Stethoscope, iconBgClass: 'bg-blue-100/50', iconColorClass: 'text-blue-600', trendColorClass: 'text-blue-600' },
 ])
 
+function startVideoCall(appt: any) {
+  console.log(appt.roomId)
+  if (appt.roomId) {
+
+    router.push(`/call/${appt.roomId}`);
+  } else {
+    alert('No video room assigned yet.')
+  }
+}
 const getStatusBadgeClass = (status: string) => {
   return status === 'Confirmed' ? 'text-xs px-3 py-1 rounded-full bg-green-100/80 text-green-700 font-medium backdrop-blur-sm border border-green-200' : 'text-xs px-3 py-1 rounded-full bg-yellow-100/80 text-yellow-700 font-medium backdrop-blur-sm border border-yellow-200'
 }

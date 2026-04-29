@@ -10,22 +10,30 @@ const {
   getDoctorSlots,
   Add_slots,
 } = require("./controllers/availabilityController");
+// const {getProfileDoctor}  = require("./controllers/doctorProfileController")
+
 // appointment se releated logic here
 const authRoutes = require("./routes/authRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
+const ProfileRoutes = require("../server/routes/ProfileRoutes");
 
 const getMedicineInfo = require("./controllers/medicineController");
 // const getCreateCall = require("./controllers/videoCallController");
 const IoTaken = require("./controllers/videoCallController");
 // socket io se releated
+
 const http = require("http");
+
 const socketIo = require("socket.io");
 const { ayurvedicChat } = require("./controllers/ayurvedic");
+
 const app = express();
 const server = http.createServer(app);
 // const User = require("./models/doctor")
 const upload = require("./middleware/upload");
+
+
 const { registerUser, loginUser } = require("./controllers/authController");
 
 const io = socketIo(server, {
@@ -34,6 +42,7 @@ const io = socketIo(server, {
     methods: ["GET", "POST"],
   },
 });
+
 // middleware
 app.use(
   cors({
@@ -59,6 +68,7 @@ app.use("/api/avail", availabilityRoutes);
 // MedicineInfo
 app.post("/api/medicine", getMedicineInfo);
 app.post("/api/ayurvedic", ayurvedicChat);
+app.post("/api/doctor",ProfileRoutes)
 
 // routes
 app.use("/api/auth", authRoutes);

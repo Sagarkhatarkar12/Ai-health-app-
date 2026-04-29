@@ -5,7 +5,10 @@ import api from "../services/api";
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
+    doctoruser:null,
+    doctorProfile: null, // Naya state doctor profile ke liye
     token: localStorage.getItem("token") || null,
+
   }),
 
   getters: {
@@ -18,7 +21,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         console.log("login store");
         console.log(email, password);
-        
+
         const response = await api.post("/api/auth/login", { email, password });
 
         this.token = response.data.token;
@@ -27,9 +30,8 @@ export const useAuthStore = defineStore("auth", {
         api.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
         console.log("Response hai apna " + response);
         // this.user = response.user;
-        console.log(this.user);
-        // router.push("/patient/dashboard");
-        return response;
+      return response;
+        
       } catch (error) {
         throw error;
       }
@@ -57,11 +59,33 @@ export const useAuthStore = defineStore("auth", {
 
     async fetchProfile() {
       if (!this.token) return;
+      
+
       try {
         const response = await api.get("/api/auth/me");
-        this.user = response.data.user;
+        console.log("Fetch profile response:",response.data)
+        // this.doctoruser = response.data.user;
+
+        // Jab bhi profile fetch ho aur role doctor ho, doctor details bhi le lo
+        if (this.user.role === "doctor") {
+          await this.fetchDoctorProfile(response.data.user._id);
+        }
       } catch {
         this.logout();
+      }
+    },
+    // 👇 Naya action – doctor profile fetch karne ke liye
+    async fetchDoctorProfile(id) {
+      try {
+        // Assume karte hain ki backend mein /api/doctors/profile/me endpoint hai
+        // jo logged-in doctor ki details return karta hai (specialization, experience, fees, etc.)
+        const response = await api.get("/api/doctors/profile/me");
+        // this.doctorProfile = response.data.doctor; // ya response.data, jaisa backend bhejega
+
+      } catch (error) {
+        console.error("Failed to fetch doctor profile", error);
+        // Agar error aaye toh doctorProfile ko null rakhenge, dashboard fallback UI dikha sakta hai
+        this.doctorProfile = null;
       }
     },
   },

@@ -72,13 +72,12 @@ const appointmentBooking = async (req, res) => {
     }
     console.log("Doctor ID ", doctorId);
     console.log("Request ID ", req.user._id);
-    
-    const patientId  = await Patient.findOne({
+
+    const patientId = await Patient.findOne({
       userId: req.user._id,
     });
-    console.log("New patient ID",patientId)
-    const patientReal = patientId._id
-    
+    console.log("New patient ID", patientId);
+    const patientReal = patientId._id;
 
     const newAppointment = new Appointment({
       doctorId,
@@ -117,14 +116,15 @@ const appointmentBooking = async (req, res) => {
 const getDoctorAppointment = async (req, res) => {
   try {
     console.log("DoctorAppointment ....");
-    // console.log("User ID:", req.user._id);
     const doctorId = req.user._id;
     console.log("Doctor Id from API " + doctorId);
     const userId = await Doctor.findOne({
       userId: doctorId,
     });
+    console.log("User id from doctor collection " + userId);
 
-    const D_userId = userId;
+    const D_userId = userId._id;
+    console.log("Doctor id from doctor collection " + D_userId);
 
     const appointments = await Appointment.find({
       doctorId: D_userId,

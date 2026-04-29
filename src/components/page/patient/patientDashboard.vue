@@ -212,10 +212,13 @@
                       <h3 class="font-semibold text-white">
                         Dr. {{ appt.doctorId?.firstName }} {{ appt.doctorId?.lastName }}
                       </h3>
+
                       <p class="text-sm text-gray-400">
                         {{ appt.appointmentDate?.split('T')[0] }} • {{ appt.timeSlot?.startTime }}
                       </p>
                       <p class="text-xs text-cyan-300 mt-1">{{ appt.type }} consultation</p>
+                      <p class="text-xs text-gray-400 mt-1">{{ appt.doctorId?.phoneNumber }}</p>
+                      <p class="text-sm text-gray-400 mt-1 ">{{ appt.doctorId?.consultantionFee || "200" }}</p>
                     </div>
                     <span
                       :class="['px-3 py-1 rounded-full text-xs font-medium border', getAppointmentStatusClasses(appt.status)]">
@@ -551,7 +554,7 @@ async function fetchPatientAppointments() {
 }
 
 function joinVideoCall(appt) {
-console.log(appt)
+  console.log(appt)
   if (appt.roomId) {
     router.push(`/call/${appt.roomId}`)
   } else {

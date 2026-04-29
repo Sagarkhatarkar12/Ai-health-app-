@@ -144,21 +144,31 @@
                           </div>
                           <div
                             class="relative w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-indigo-100 flex items-center justify-center text-primary font-semibold text-sm border border-white/50">
-                            {{ appt.patientId?.email?.charAt(0) || appt.patientName?.charAt(0) || 'P' }}
+                            {{ appt.patientId?.email?.charAt(0) || appt.patientId?.firstName?.charAt(0) || 'P' }}
                           </div>
                         </div>
                         <div>
-                          <h3 class="font-semibold text-gray-800">{{ appt.patientName }}</h3>
-                          <p class="text-sm text-gray-500">{{ appt.type || 'Consultation' }} • {{ appt.time || '--:--'
-                          }}</p>
+                          <!-- {{ appt }} -->
+                          <h3 class="font-semibold text-gray-800">{{ appt.patientId?.firstName }} {{
+                            appt.patientId?.lastName }}</h3>
+                          <p class="text-sm text-gray-500">{{ new Date(appt.appointmentDate) || "date" }}</p>
+                          <p class="text-sm text-gray-500">{{ appt.type || 'Consultation' }} • {{
+                            appt.timeSlot?.startTime || '--:--' }} - {{ appt.timeSlot?.endTime || '--:--'
+                            }}</p>
+                          <p class="text-xs text-gray-400 mt-1">{{ appt?.patientId?.phoneNumber || 'phone number' }}</p>
+
+                          <p class="text-xs text-gray-600 mt-1 italic" v-if="appt.symptoms"> 🩺 Symptoms: {{
+                            appt.symptoms }}</p>
+                          <p class="text-xs text-gray-400 mt-1 italic" v-else> No symptoms recorded </p>
                         </div>
                       </div>
-                      
+
 
                       <!-- Right: Status Badge + Action Buttons (if pending) -->
                       <div class="flex items-center gap-3">
                         <!-- Status Badge -->
-                        <span :class="getStatusBadgeClass(appt.status)">{{ appt.status }}</span>
+                        <span :class="getStatusBadgeClass(appt.patientId?.status)">{{ appt.status }}</span>
+                        <!-- {{ appt }} -->
                         <!-- Video Call Button (always visible for non-cancelled appointments) -->
                         <button v-if="appt.status?.toLowerCase() !== 'cancelled'" @click="startVideoCall(appt)"
                           class="p-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md hover:scale-105 transition-all"
@@ -284,7 +294,8 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
+
 
 const doctorName = computed(() => {
   const user = authStore.user
@@ -309,6 +320,7 @@ const activeTab = ref('appointments')
 // console.log(appointments);
 
 const appointments = ref([
+
   { id: 1, patientName: 'Emily Rodriguez', type: 'Follow-up', time: '09:00 AM', status: 'Confirmed', initials: 'ER' },
   { id: 2, patientName: 'Michael Chen', type: 'Consultation', time: '10:30 AM', status: 'Confirmed', initials: 'MC' },
 ])

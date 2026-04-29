@@ -24,15 +24,17 @@ export const appointmentService = {
     return response;
   },
   async getDoctorAppointments() {
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     const response = await axios.get(
       "http://localhost:3000/api/appointments/doctor",
-      {headers: {
-        Authorization: `Bearer ${token}`, // ✅ MUST
-      },}
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ MUST
+        },
+      },
     );
-    console.log(response)
-    console.log("docTor appointment");
+    console.log(response);
+    console.log("doctor appointment");
     return response.data;
   },
   async updateStatus(appointmentId, status, cancellationReason = "") {
@@ -43,13 +45,13 @@ export const appointmentService = {
     return response.data;
   },
   // appointmentService.js
-async updateAppointmentStatus(appointmentId, status) {
-  const token = localStorage.getItem('token'); // or from authStore
-  const response = await axios.patch(
-    `http://localhost:3000/api/appointments/${appointmentId}/status`,
-    { status },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return response.data;
-}
+  async updateAppointmentStatus(appointmentId, status) {
+    const token = localStorage.getItem("token"); // or from authStore
+    const response = await axios.patch(
+      `http://localhost:3000/api/appointments/${appointmentId}/status`,
+      { status },
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return response.data;
+  },
 };

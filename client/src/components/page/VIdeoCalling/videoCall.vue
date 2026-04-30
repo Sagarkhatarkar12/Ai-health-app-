@@ -172,7 +172,7 @@ let previewStream = null; // store preview stream
 let currentCallStream = null;
 // // console.log(currentRoom1.value)
 
-const socket = io("https://hearty-prosperity-production.up.railway.app"); // isse backend me request jati hai connection jamane ke liye
+const socket = io("http://localhost:3000"); // isse backend me request jati hai connection jamane ke liye
 // Place this right after socket = io(...)
 // ✅ RECEIVE SIGNAL
 

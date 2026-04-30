@@ -16,7 +16,7 @@ const {
 const authRoutes = require("./routes/authRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
-const ProfileRoutes = require("../server/routes/ProfileRoutes");
+const ProfileRoutes = require("./routes/ProfileRoutes");
 
 const getMedicineInfo = require("./controllers/medicineController");
 // const getCreateCall = require("./controllers/videoCallController");
@@ -46,7 +46,7 @@ const io = socketIo(server, {
 // middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"], // React default ports
+    origin:  true ,
     credentials: true,
   }),
 );

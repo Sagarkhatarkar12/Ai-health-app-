@@ -254,7 +254,6 @@
 <script setup lang="ts">
 // ⚠️ This script part remains **100% unchanged** – only design changed.
 import { ref, watch, computed } from 'vue'
-
 import api from "../../../services/api"
 
 interface MedicineData {
@@ -336,7 +335,7 @@ async function fetchMedicineInfo(searchName: string) {
   error.value = null
   const key = searchName.trim().toLowerCase()
   try {
-    // const baseURL = 'http://localhost:3000'
+
     const res = await api.post(`/api/medicine`, { medicineName: key })
     const data = res.data?.data || res.data
     const usesText = Array.isArray(data.uses) ? data.uses.join('. ') : data.uses || 'No information available'

@@ -1,8 +1,5 @@
 import { defineStore } from "pinia";
-// import api from "../services/api"
-// ;
 import api from "../services/api";
-
 // import router from '@/router'
 
 export const useAuthStore = defineStore("auth", {
@@ -25,7 +22,7 @@ export const useAuthStore = defineStore("auth", {
         console.log("login store");
         console.log(email, password);
 
-        const response = await api.post("/api/auth/login", { email, password });
+        const response = await api.post("/auth/login", { email, password });
 
         this.token = response.data.token;
         this.user = response.data.user;

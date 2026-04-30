@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const Doctor = require("../models/Doctor");
+const Doctor = require("../models/doctor");
 const Patient = require("../models/Patient");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");

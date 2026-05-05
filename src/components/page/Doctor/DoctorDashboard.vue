@@ -70,6 +70,7 @@
                   :class="stat.trendColorClass">
                   <TrendingUpIcon v-if="stat.trend.includes('+')" class="w-3 h-3" />
                   {{ stat.trend }}
+                  
                 </p>
               </div>
               <div

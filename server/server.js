@@ -2,6 +2,15 @@ const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
 const mongoose = require("mongoose");
+
+// admin routes
+// const Patient = require("./")
+const Doctor = require("./models/Doctor");
+const User = require("./models/User");
+
+const Patient = require("./models/Patient");
+const Appointment = require("./models/Appointment");
+
 const availabilityRoutes = require("./routes/availabilityRoutes");
 // Availability se releated logic here
 const protect = require("./middleware/authMiddleware");
@@ -17,6 +26,7 @@ const authRoutes = require("./routes/authRoutes");
 const medicineRoutes = require("./routes/medicineRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const ProfileRoutes = require("./routes/ProfileRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const getMedicineInfo = require("./controllers/medicineController");
 // const getCreateCall = require("./controllers/videoCallController");
@@ -33,7 +43,6 @@ const server = http.createServer(app);
 // const User = require("./models/doctor")
 const upload = require("./middleware/upload");
 
-
 const { registerUser, loginUser } = require("./controllers/authController");
 
 const io = socketIo(server, {
@@ -46,7 +55,7 @@ const io = socketIo(server, {
 // middleware
 app.use(
   cors({
-    origin:  true ,
+    origin: true,
     credentials: true,
   }),
 );
@@ -68,10 +77,37 @@ app.use("/api/avail", availabilityRoutes);
 // MedicineInfo
 app.post("/api/medicine", getMedicineInfo);
 app.post("/api/ayurvedic", ayurvedicChat);
-app.post("/api/doctor",ProfileRoutes)
+app.post("/api/doctor", ProfileRoutes);
 
 // routes
 app.use("/api/auth", authRoutes);
+app.use("/api/admin",adminRoutes)
+
+app.get("/api/admin/stats", async (req, res) => {
+
+});
+app.get("/api/admin/all-doctors", async (req, res) => {
+  
+});
+app.get("/api/admin/pending-doctors", async (req, res) => {
+  
+});
+app.get("/api/admin/users", async (req, res) => {
+ 
+});
+
+app.put("/api/admin/verify-doctor/:id", async (req, res) => {
+  
+});
+
+//
+app.delete("/api/admin/delete-doctor/:id", (req, res) => {
+  
+});
+
+app.put("/api/admin/users/:id/status", async (req, res) => {
+  
+});
 
 // server code is here
 const StartServer = async () => {

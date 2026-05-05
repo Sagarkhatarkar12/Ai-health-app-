@@ -8,6 +8,7 @@ import patientDashboard from "../components/page/patient/patientDashboard.vue";
 import DoctorDashboard from "../components/page/Doctor/DoctorDashboard.vue";
 import ayurvedic from "../components/page/ayurvedic.vue";
 import { useAuthStore } from "../stores/auth";
+import AdminDashboard from "../components/page/Admin/admin.vue"
 // import PatientLogin from './pages/PatientLogin.vue'
 const routes = [
   {
@@ -58,6 +59,12 @@ const routes = [
     component: ayurvedic,
   },
 
+  {
+
+    path: "/admin",
+    name: "AdminDashboard",
+    component: AdminDashboard,
+  },
   // Baad mein dashboard routes add kar sakte ho
 ];
 

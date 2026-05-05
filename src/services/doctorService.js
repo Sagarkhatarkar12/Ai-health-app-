@@ -6,7 +6,7 @@ export const doctorService = {
   async getDoctor(params) {
     console.log("get doctor function is running here");
     console.log(params);
-    const response = await api.get("api/avail/doctors", {
+    const response = await api.get("/api/avail/doctors", {
       params,
     }
   
@@ -17,7 +17,7 @@ export const doctorService = {
   async getDoctorSlots(doctorId, date) {
     const token = localStorage.getItem("token");
     const response = await api.get(
-      `api/avail/doctor/${doctorId}/slots`,
+      `/api/avail/doctor/${doctorId}/slots`,
       {
         params: { date },
       },

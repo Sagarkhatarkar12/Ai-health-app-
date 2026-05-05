@@ -263,7 +263,8 @@
                   <div class="flex items-start gap-4">
                     <div
                       class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-semibold text-lg">
-                      {{ doctor.firstName?.[0] }}{{ doctor.lastName?.[0] }}
+                      {{ doctor.firstName?.[0] }}{{ doctor.lastName?.[0] }}  
+                     
                     </div>
                     <div class="flex-1">
                       <h3 class="font-semibold text-white">Dr. {{ doctor.firstName }} {{ doctor.lastName }}</h3>

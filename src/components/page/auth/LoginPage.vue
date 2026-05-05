@@ -215,7 +215,7 @@ const handleLogin = async () => {
         } else if (role === 'doctor') {
             router.push('/doctor/dashboard')
         } else if (role === 'admin') {
-            router.push('/admin/dashboard')
+            router.push('/admin')
         } else {
             router.push('/')
         }

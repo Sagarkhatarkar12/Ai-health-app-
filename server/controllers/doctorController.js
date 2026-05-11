@@ -40,7 +40,9 @@ exports.getDoctors = async (req, res) => {
     else sortOptions.createdAt = -1;
 
     const doctors = await User.find(query)
-      .select("firstName lastName specialization experience rating consultationFee profileImage")
+      .select(
+        "firstName lastName specialization experience rating consultationFee profileImage",
+      )
       .sort(sortOptions)
       .limit(30);
 
@@ -60,11 +62,15 @@ exports.getDoctors = async (req, res) => {
 // @access  Public
 exports.getDoctorById = async (req, res) => {
   try {
-    const doctor = await User.findOne({ _id: req.params.id, role: "doctor" })
-      .select("-password -email");
+    const doctor = await User.findOne({
+      _id: req.params.id,
+      role: "doctor",
+    }).select("-password -email");
 
     if (!doctor) {
-      return res.status(404).json({ success: false, message: "Doctor not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Doctor not found" });
     }
 
     res.status(200).json({ success: true, doctor });
@@ -83,7 +89,9 @@ exports.getDoctorSlots = async (req, res) => {
     const { date } = req.query;
 
     if (!date) {
-      return res.status(400).json({ success: false, message: "Date is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Date is required" });
     }
 
     const queryDate = new Date(date);
@@ -113,7 +121,7 @@ exports.getDoctorSlots = async (req, res) => {
 
     // Filter out booked slots
     const availableSlots = availability.slots.filter(
-      (slot) => !bookedTimes.includes(slot.startTime)
+      (slot) => !bookedTimes.includes(slot.startTime),
     );
 
     res.status(200).json({
@@ -141,7 +149,7 @@ exports.setAvailability = async (req, res) => {
     const availability = await Availability.findOneAndUpdate(
       { doctorId, date: availabilityDate },
       { slots, isAvailable: slots.length > 0 },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     );
 
     res.status(200).json({

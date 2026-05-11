@@ -149,7 +149,7 @@
                           </div>
                         </div>
                         <div>
-                          <!-- {{ appt }} -->
+                        
                           <h3 class="font-semibold text-gray-800">{{ appt.patientId?.firstName }} {{
                             appt.patientId?.lastName }}</h3>
                           <p class="text-sm text-gray-500">{{ new Date(appt.appointmentDate) || "date" }}</p>
@@ -179,6 +179,25 @@
                               d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                           </svg>
                         </button>
+
+<button
+    v-if="appt.status?.toLowerCase() === 'confirmed'"
+    @click="openPrescriptionFor(appt)"
+    class="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:scale-105 transition-all"
+    title="Write Prescription"
+  >
+    <ClipboardList class="w-4 h-4" />
+  </button>
+
+
+
+
+
+
+
+
+
+
                         <!-- Accept / Reject Buttons (only for pending) -->
                         <div v-if="appt.status?.toLowerCase() === 'pending'" class="flex gap-2">
                           <button @click="handleAccept(appt)"
@@ -251,6 +270,64 @@
                   </div>
                 </div>
 
+               <div v-else-if="activeTab === 'prescriptions'" class="space-y-5">
+  <div class="flex justify-between items-center">
+    <div>
+      <h2 class="text-xl font-semibold text-gray-800">Prescriptions</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Write & manage e-prescriptions</p>
+    </div>
+    <button
+      @click="openNewPrescription"
+      class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all hover:scale-105"
+    >
+      + New Prescription
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div v-if="prescriptions.length === 0" class="text-center py-10 text-gray-400">
+    <ClipboardList class="w-10 h-10 mx-auto mb-2 opacity-40" />
+    <p>No prescriptions yet. Click "New Prescription" to create one.</p>
+  </div>
+
+  <!-- Prescription Cards -->
+  <div v-else class="grid gap-3">
+    <div
+      v-for="rx in prescriptions"
+      :key="rx.id"
+      class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all flex items-center justify-between"
+    >
+      <div class="flex-1">
+        <div class="flex items-center gap-2">
+          <h3 class="font-semibold text-gray-800">{{ rx.patientName }}</h3>
+          <span
+            class="text-xs px-2 py-0.5 rounded-full font-medium"
+            :class="rx.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'"
+          >
+            {{ rx.status === 'sent' ? 'Sent' : 'Draft' }}
+          </span>
+        </div>
+        <p class="text-sm text-gray-600 mt-1">{{ rx.diagnosis }}</p>
+        <div class="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+          <span>{{ rx.date }}</span>
+          <span>•</span>
+          <span>{{ rx.medicines?.length || 0 }} medicine(s)</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 ml-4">
+        <button @click="viewPrescription(rx)"
+          class="p-2 rounded-lg hover:bg-gray-100 transition" title="View">
+          <Eye class="w-4 h-4 text-gray-600" />
+        </button>
+        <button @click="deletePrescription(rx.id)"
+          class="p-2 rounded-lg hover:bg-red-100 transition" title="Delete">
+          <Trash2 class="w-4 h-4 text-red-500" />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
                 <!-- Messages Tab -->
                 <div v-else-if="activeTab === 'messages'" class="space-y-5">
                   <div>
@@ -278,30 +355,50 @@
       </div>
     </main>
   </div>
+
+
+  <!-- Prescription Modal (global for dashboard) -->
+<PrescriptionForm
+  :visible="showPrescriptionForm"
+  :appointment="selectedAppointment"
+  @close="showPrescriptionForm = false"
+  @saved="onPrescriptionSaved"
+/>
+
+
+<PrescriptionDetailModal
+  :visible="showDetailModal"
+  :prescription="selectedPrescription"
+  @close="showDetailModal = false"
+  @edit="handleEditPrescription"
+/>
 </template>
 
 <script setup lang="ts">
 import { watch } from 'vue'
 import { ref, computed } from 'vue'
-import { useAuthStore } from '../../../stores/auth'
+import { useAuthStore } from "../../../stores/auth"
 import NavBar from '../../page/NavBar.vue'
 import AvailabilityManager from '../AvailabilityManger/Availablity.vue'
 import {
   Calendar, Clock, Users, FileText, Stethoscope, Bell, Settings,
-  ChevronRight, MessageCircle, TrendingUp
+  ChevronRight, MessageCircle, TrendingUp,ClipboardList,Eye
 } from 'lucide-vue-next'
 import { appointmentService } from "../../../services/appointmentService"
 import { useRouter } from 'vue-router'
+import PrescriptionForm from "../prescription/PrescriptionForm.vue"
+import PrescriptionDetailModal from "../prescription/PrescriptionDetailModal.vue"
+import {prescriptionService} from "../../../services/prescriptionService"
 
 const router = useRouter()
 
 const authStore = useAuthStore();
-
+console.log(authStore)
 
 const doctorName = computed(() => {
   const user = authStore.user
   console.log(user)
-  return user ? `${user.profile.firstName} ${user.profile.lastName}` : 'Emily Carter'
+  return user ? `${user.profile.firstName}  ${user.profile.lastName}` : 'Emily Carter'
 })
 
 const doctorId = computed(() => authStore.user?._id || '69df6aa3d7ce10ea2bdc80ff')
@@ -313,6 +410,7 @@ const tabs = [
   { value: 'appointments', label: 'Appointments', icon: Calendar },
   { value: 'patients', label: 'Patients', icon: Users },
   { value: 'availability', label: 'Availability', icon: Clock },
+  { value: 'prescriptions', label: 'Prescriptions', icon: ClipboardList },  
   { value: 'labs', label: 'Lab Results', icon: FileText },
   { value: 'messages', label: 'Messages', icon: MessageCircle, badge: '3' }
 ]
@@ -360,9 +458,93 @@ function startVideoCall(appt: any) {
     alert('No video room assigned yet.')
   }
 }
-const getStatusBadgeClass = (status: string) => {
-  return status === 'Confirmed' ? 'text-xs px-3 py-1 rounded-full bg-green-100/80 text-green-700 font-medium backdrop-blur-sm border border-green-200' : 'text-xs px-3 py-1 rounded-full bg-yellow-100/80 text-yellow-700 font-medium backdrop-blur-sm border border-yellow-200'
+// prescription form logic 
+const showPrescriptionForm = ref(false)
+const selectedAppointment = ref<any>(null)
+
+// function onPrescriptionSaved(prescription: any) {
+//   console.log('Prescription saved:', prescription)
+//   // Future: refresh list
+// }
+
+const openPrescriptionFor = (appt: any) => {
+  editPrescriptionData.value = null
+  selectedAppointment.value = appt
+  showPrescriptionForm.value = true
 }
+
+function openNewPrescription() {
+  editPrescriptionData.value = null
+  selectedAppointment.value = null
+  showPrescriptionForm.value = true
+}
+
+// ========== Prescriptions State ==========
+const prescriptions = ref<any[]>([])
+
+async function loadPrescriptions() {
+  try {
+    alert("load precription")
+    const result = await prescriptionService.getDoctor();
+    prescriptions.value = result.data || [];
+  } catch (error) {
+    console.error('Failed to load prescriptions:', error);
+    prescriptions.value = [];
+  }
+}
+
+function deletePrescription(id: string) {
+  prescriptions.value = prescriptions.value.filter(p => p.id !== id)
+  localStorage.setItem('prescriptions', JSON.stringify(prescriptions.value))
+}
+
+function viewPrescription(prescription: any) {
+  selectedPrescription.value = prescription
+  showDetailModal.value = true
+}
+const showDetailModal = ref(false)
+const selectedPrescription = ref<any>(null)
+const editPrescriptionData = ref<any>(null)
+
+  function handleEditPrescription(prescription: any) {
+  showDetailModal.value = false
+  selectedAppointment.value = null
+  editPrescriptionData.value = prescription
+  showPrescriptionForm.value = true
+}
+
+// जब Prescriptions tab खुले या prescription save हो तब लिस्ट refresh हो
+function onPrescriptionSaved(prescription: any) {
+  console.log('Prescription saved:', prescription)
+  loadPrescriptions()
+}
+
+// अगर activeTab बदले तो prescriptions लोड करें
+watch(activeTab, (newTab) => {
+  console.log("Tab changed:", newTab)
+  if (newTab === 'appointments') {
+    fetchAppointments()
+  } else if (newTab === 'prescriptions') {
+    loadPrescriptions()
+  }
+})
+
+// शुरुआत में भी लोड करें
+loadPrescriptions()
+
+
+
+// detail modal logic
+// sratus badge logic
+
+const getStatusBadgeClass = (status: string) => {
+  return status?.toLowerCase() === 'confirmed'
+    ? 'text-xs px-3 py-1 rounded-full bg-green-100/80 text-green-700 font-medium backdrop-blur-sm border border-green-200'
+    : 'text-xs px-3 py-1 rounded-full bg-yellow-100/80 text-yellow-700 font-medium backdrop-blur-sm border border-yellow-200'
+}
+
+
+
 // ========== Accept / Reject Handlers ==========
 const handleAccept = async (appt: any) => {
   console.log("✅ Accept clicked for:", appt)

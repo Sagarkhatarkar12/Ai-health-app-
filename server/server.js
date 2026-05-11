@@ -109,6 +109,10 @@ app.put("/api/admin/users/:id/status", async (req, res) => {
   
 });
 
+
+
+app.use("/api/prescriptions",require("./routes/prescriptionRoutes"))
+
 // server code is here
 const StartServer = async () => {
   try {

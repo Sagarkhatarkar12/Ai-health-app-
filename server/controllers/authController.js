@@ -8,23 +8,24 @@ const cloudinary = require("../config/cloudinary");
 dotenv.config();
 
 const registerUser = async (req, res) => {
-  let data;
+  var data = {};
   try {
     if (typeof req.body.payload === "string") {
       data = JSON.parse(req.body.payload);
     } else {
       data = req.body.payload;
     }
+    console.log(data.specialization);
 
     const { role, firstName, lastName, email, password, phoneNumber } = data;
 
     const patientData = data || {};
     const doctorData = data.doctor || {};
+    console.log("Doctor data - ", doctorData);
 
     // const medicalLicense = req.files?.medicalLicense?.[0]?.path || null;
     // const identityProof = req.files?.identityProof?.[0]?.path || null;
     const profileUrl = req.files?.profileImage?.[0]?.path || null;
-    
 
     // Validate required fields
     if (!email || !password || !role) {
@@ -97,30 +98,30 @@ const registerUser = async (req, res) => {
         profileImage: profileUrl || "",
 
         document: {
-          medicalLicense: doctorData.medicalLicense || null,
-          identityProof: doctorData.identityProof || null,
+          medicalLicense: data.medicalLicense || null,
+          identityProof: data.identityProof || null,
         },
 
-        availability: doctorData.availability,
+        availability: data.availability,
 
-        qualification: Array.isArray(doctorData.qualification)
-          ? doctorData.qualification.map((q) => ({
+        qualification: Array.isArray(data.qualification)
+          ? data.qualification.map((q) => ({
               degree: q.degree,
               institution: q.institution,
               yearOfCompletion: q.yearOfCompletion,
             }))
           : [],
 
-        specialization: doctorData.specialization,
-        consultationFee: doctorData.consultationFee,
-        experience: doctorData.experience,
+        specialization: data.specialization || null,
+        consultationFee: data.consultationFee,
+        experience: data.experience,
 
         // 👇 IMPORTANT (string → array convert)
-        languages: doctorData.languagesRaw
-          ? doctorData.languagesRaw.split(",").map((l) => l.trim())
-          : [],
+        //   languages: data.languagesRaw
+        //     ? data.languagesRaw.split(",").map((l) => l.trim())
+        //     : [],
 
-        bio: doctorData.bio,
+        //   bio: data.bio,
       });
     } else {
       await User.findByIdAndDelete(user._id);

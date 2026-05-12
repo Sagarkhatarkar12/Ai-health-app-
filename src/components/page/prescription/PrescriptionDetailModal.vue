@@ -18,7 +18,7 @@
               Prescription Details
             </h2>
             <p class="text-sm text-gray-500 mt-0.5">
-              For {{ prescription.patientName || 'Patient' }}
+              For {{ prescription.patientId.firstName }} {{ prescription.patientId.lastName|| 'Patient' }}
             </p>
           </div>
           <button
@@ -33,7 +33,7 @@
         <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
           <div>
             <span class="text-sm font-semibold text-gray-600">Date:</span>
-            <span class="ml-2 text-gray-800">{{ prescription.date }}</span>
+            <span class="ml-2 text-gray-800">{{ prescription.createdAt }}</span>
           </div>
           <div>
             <span class="text-sm font-semibold text-gray-600">Status:</span>
@@ -151,7 +151,7 @@ function downloadPDF() {
   const html = `
     <html>
       <head>
-        <title>Prescription - ${rx.patientName}</title>
+        <title>Prescription - ${rx.patientId.firstName} ${rx.patientId.lastName}</title>
         <style>
           body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; }
           h1 { color: #1e293b; border-bottom: 2px solid #6366f1; padding-bottom: 10px; }
@@ -165,8 +165,8 @@ function downloadPDF() {
       </head>
       <body>
         <h1>E-Prescription</h1>
-        <p><strong>Patient:</strong> ${rx.patientName}</p>
-        <p><strong>Date:</strong> ${rx.date}</p>
+        <p><strong>Patient:</strong> ${rx.patientId.firstName} ${rx.patientId.lastName}</p>
+        <p><strong>Date:</strong> ${rx.createdAt}</p>
         <p><strong>Status:</strong> <span class="badge ${rx.status}">${rx.status === 'sent' ? 'Sent' : 'Draft'}</span></p>
         <p><strong>Diagnosis:</strong> ${rx.diagnosis}</p>
         <h2>Medicines</h2>

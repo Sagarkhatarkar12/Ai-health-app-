@@ -70,7 +70,7 @@
                   :class="stat.trendColorClass">
                   <TrendingUpIcon v-if="stat.trend.includes('+')" class="w-3 h-3" />
                   {{ stat.trend }}
-                  
+
                 </p>
               </div>
               <div
@@ -149,7 +149,7 @@
                           </div>
                         </div>
                         <div>
-                        
+
                           <h3 class="font-semibold text-gray-800">{{ appt.patientId?.firstName }} {{
                             appt.patientId?.lastName }}</h3>
                           <p class="text-sm text-gray-500">{{ new Date(appt.appointmentDate) || "date" }}</p>
@@ -180,14 +180,11 @@
                           </svg>
                         </button>
 
-<button
-    v-if="appt.status?.toLowerCase() === 'confirmed'"
-    @click="openPrescriptionFor(appt)"
-    class="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:scale-105 transition-all"
-    title="Write Prescription"
-  >
-    <ClipboardList class="w-4 h-4" />
-  </button>
+                        <button v-if="appt.status?.toLowerCase() === 'confirmed'" @click="openPrescriptionFor(appt)"
+                          class="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:scale-105 transition-all"
+                          title="Write Prescription">
+                          <ClipboardList class="w-4 h-4" />
+                        </button>
 
 
 
@@ -270,63 +267,57 @@
                   </div>
                 </div>
 
-               <div v-else-if="activeTab === 'prescriptions'" class="space-y-5">
-  <div class="flex justify-between items-center">
-    <div>
-      <h2 class="text-xl font-semibold text-gray-800">Prescriptions</h2>
-      <p class="text-sm text-gray-500 mt-0.5">Write & manage e-prescriptions</p>
-    </div>
-    <button
-      @click="openNewPrescription"
-      class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all hover:scale-105"
-    >
-      + New Prescription
-    </button>
-  </div>
+                <div v-else-if="activeTab === 'prescriptions'" class="space-y-5">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h2 class="text-xl font-semibold text-gray-800">Prescriptions</h2>
+                      <p class="text-sm text-gray-500 mt-0.5">Write & manage e-prescriptions</p>
+                    </div>
+                    <button @click="openNewPrescription"
+                      class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all hover:scale-105">
+                      + New Prescription
+                    </button>
+                  </div>
 
-  <!-- Empty State -->
-  <div v-if="prescriptions.length === 0" class="text-center py-10 text-gray-400">
-    <ClipboardList class="w-10 h-10 mx-auto mb-2 opacity-40" />
-    <p>No prescriptions yet. Click "New Prescription" to create one.</p>
-  </div>
+                  <!-- Empty State -->
+                  <div v-if="prescriptions.length === 0" class="text-center py-10 text-gray-400">
+                    <ClipboardList class="w-10 h-10 mx-auto mb-2 opacity-40" />
+                    <p>No prescriptions yet. Click "New Prescription" to create one.</p>
+                  </div>
 
-  <!-- Prescription Cards -->
-  <div v-else class="grid gap-3">
-    <div
-      v-for="rx in prescriptions"
-      :key="rx.id"
-      class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all flex items-center justify-between"
-    >
-      <div class="flex-1">
-        <div class="flex items-center gap-2">
-          <h3 class="font-semibold text-gray-800">{{ rx.patientName }}</h3>
-          <span
-            class="text-xs px-2 py-0.5 rounded-full font-medium"
-            :class="rx.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'"
-          >
-            {{ rx.status === 'sent' ? 'Sent' : 'Draft' }}
-          </span>
-        </div>
-        <p class="text-sm text-gray-600 mt-1">{{ rx.diagnosis }}</p>
-        <div class="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
-          <span>{{ rx.date }}</span>
-          <span>•</span>
-          <span>{{ rx.medicines?.length || 0 }} medicine(s)</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 ml-4">
-        <button @click="viewPrescription(rx)"
-          class="p-2 rounded-lg hover:bg-gray-100 transition" title="View">
-          <Eye class="w-4 h-4 text-gray-600" />
-        </button>
-        <button @click="deletePrescription(rx.id)"
-          class="p-2 rounded-lg hover:bg-red-100 transition" title="Delete">
-          <Trash2 class="w-4 h-4 text-red-500" />
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+                  <!-- Prescription Cards -->
+                  <div v-else class="grid gap-3">
+                    <div v-for="rx in prescriptions" :key="rx.id"
+                      class="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-white/60 shadow-sm hover:shadow-md hover:bg-white/80 transition-all flex items-center justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                          <h3 class="font-semibold text-gray-800">{{ rx.patientId.firstName }} {{ rx.patientId.lastName
+                            }}</h3>
+                          <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                            :class="rx.status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'">
+                            {{ rx.status === 'sent' ? 'Sent' : 'Draft' }}
+                          </span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">{{ rx.diagnosis }}</p>
+                        <div class="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+                          <span>{{ rx.createdAt.toString() }}</span>
+                          <span>•</span>
+                          <span>{{ rx.medicines?.length || 0 }} medicine(s)</span>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 ml-4">
+                        <button @click="viewPrescription(rx)" class="p-2 rounded-lg hover:bg-gray-100 transition"
+                          title="View">
+                          <Eye class="w-4 h-4 text-gray-600" />
+                        </button>
+                        <button @click="deletePrescription(rx.id)" class="p-2 rounded-lg hover:bg-red-100 transition"
+                          title="Delete">
+                          <Trash2 class="w-4 h-4 text-red-500" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Messages Tab -->
                 <div v-else-if="activeTab === 'messages'" class="space-y-5">
@@ -358,20 +349,12 @@
 
 
   <!-- Prescription Modal (global for dashboard) -->
-<PrescriptionForm
-  :visible="showPrescriptionForm"
-  :appointment="selectedAppointment"
-  @close="showPrescriptionForm = false"
-  @saved="onPrescriptionSaved"
-/>
+  <PrescriptionForm :visible="showPrescriptionForm" :appointment="selectedAppointment"
+    @close="showPrescriptionForm = false" @saved="onPrescriptionSaved" />
 
 
-<PrescriptionDetailModal
-  :visible="showDetailModal"
-  :prescription="selectedPrescription"
-  @close="showDetailModal = false"
-  @edit="handleEditPrescription"
-/>
+  <PrescriptionDetailModal :visible="showDetailModal" :prescription="selectedPrescription"
+    @close="showDetailModal = false" @edit="handleEditPrescription" />
 </template>
 
 <script setup lang="ts">
@@ -382,13 +365,13 @@ import NavBar from '../../page/NavBar.vue'
 import AvailabilityManager from '../AvailabilityManger/Availablity.vue'
 import {
   Calendar, Clock, Users, FileText, Stethoscope, Bell, Settings,
-  ChevronRight, MessageCircle, TrendingUp,ClipboardList,Eye
+  ChevronRight, MessageCircle, TrendingUp, ClipboardList, Eye
 } from 'lucide-vue-next'
 import { appointmentService } from "../../../services/appointmentService"
 import { useRouter } from 'vue-router'
 import PrescriptionForm from "../prescription/PrescriptionForm.vue"
 import PrescriptionDetailModal from "../prescription/PrescriptionDetailModal.vue"
-import {prescriptionService} from "../../../services/prescriptionService"
+import { prescriptionService } from "../../../services/prescriptionService"
 
 const router = useRouter()
 
@@ -410,7 +393,7 @@ const tabs = [
   { value: 'appointments', label: 'Appointments', icon: Calendar },
   { value: 'patients', label: 'Patients', icon: Users },
   { value: 'availability', label: 'Availability', icon: Clock },
-  { value: 'prescriptions', label: 'Prescriptions', icon: ClipboardList },  
+  { value: 'prescriptions', label: 'Prescriptions', icon: ClipboardList },
   { value: 'labs', label: 'Lab Results', icon: FileText },
   { value: 'messages', label: 'Messages', icon: MessageCircle, badge: '3' }
 ]
@@ -486,6 +469,7 @@ async function loadPrescriptions() {
   try {
     alert("load precription")
     const result = await prescriptionService.getDoctor();
+    console.log(result.data[0])
     prescriptions.value = result.data || [];
   } catch (error) {
     console.error('Failed to load prescriptions:', error);
@@ -506,7 +490,7 @@ const showDetailModal = ref(false)
 const selectedPrescription = ref<any>(null)
 const editPrescriptionData = ref<any>(null)
 
-  function handleEditPrescription(prescription: any) {
+function handleEditPrescription(prescription: any) {
   showDetailModal.value = false
   selectedAppointment.value = null
   editPrescriptionData.value = prescription

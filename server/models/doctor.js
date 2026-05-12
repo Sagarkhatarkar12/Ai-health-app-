@@ -34,18 +34,7 @@ const doctorSchema = new mongoose.Schema(
     ],
 
     specialization: {
-      type: String,
-      enum: [
-        "Cardiologist",
-        "Dermatologist",
-        "Neurologist",
-        "Pediatrician",
-        "Psychiatrist",
-        "General Physician",
-        "Orthopedic",
-        "Gynecologist",
-      ],
-    },
+      type: String,    },
     experience: { type: Number, min: 0 },
     consultationFee: { type: Number, min: 0 },
     bio: String,

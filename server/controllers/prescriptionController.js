@@ -91,6 +91,7 @@ exports.getDoctorPrescriptions = async (req, res) => {
     console.log(Prescription);
     const prescriptions = await Prescription.find({doctorId: realPatient})
       .populate("doctorId", "firstName lastName specialization")
+      .populate("patientId", "firstName lastName email phoneNumber")
       .populate("appointmentId", "appointmentDate timeSlot")
       .sort({ createdAt: -1 });
     console.log("GET DOCTOR PRESCRIPTION - ",prescriptions);

@@ -17,9 +17,12 @@ API.interceptors.request.use((config) => {
 export const prescriptionService={
     create(data)        {
         console.log("prici");
-        return API.post('/', data).then(res => alert(res.data)); 
+        return API.post('/', data).then(res => res.data); 
     },
-  getDoctor()         { return API.get('/doctor').then(res => res.data); },
+  getDoctor()         { 
+     return API.get('/doctor').then( res => res.data);
+     console.log(res.data);
+     },
   getPatient()        { return API.get('/patient').then(res => res.data); },
   update(id, data)    { return API.put(`/${id}`, data).then(res => res.data); },
   delete(id)          { return API.delete(`/${id}`).then(res => res.data); }

@@ -235,6 +235,9 @@
                 </div>
               </div>
             </div>
+            <div v-else-if="selectedTab === 'ai-scan'" class="space-y-6">
+              <MedicalImageAnalyzer />
+            </div>
 
             <!-- Book Appointment Tab -->
             <div v-else-if="selectedTab === 'book'" class="space-y-6">
@@ -356,6 +359,7 @@ import { doctorService } from "../../../services/doctorService"
 // import doctorService from '../../../services/doctorService'
 import { appointmentService } from '../../../services/appointmentService'
 import { useRouter } from 'vue-router'
+import MedicalImageAnalyzer from '../../Ai/MedicalImageAnalyzer.vue'
 import {
   User as UserIcon,
   Heart as HeartIcon,
@@ -423,7 +427,8 @@ const getAppointmentStatusClasses = (status) => {
 const tabs = [
   { label: 'Overview', value: 'overview' },
   { label: 'Appointments', value: 'appointments' },
-  { label: 'Book Appointment', value: 'book' }
+  { label: 'Book Appointment', value: 'book' },
+  { label: 'AI Scan', value: 'ai-scan' }
 ]
 const selectedTab = ref('overview')
 

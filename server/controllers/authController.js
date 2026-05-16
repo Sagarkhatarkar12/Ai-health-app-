@@ -117,9 +117,9 @@ const registerUser = async (req, res) => {
         experience: data.experience,
 
         // 👇 IMPORTANT (string → array convert)
-        //   languages: data.languagesRaw
-        //     ? data.languagesRaw.split(",").map((l) => l.trim())
-        //     : [],
+          languages: data.languagesRaw
+            ? data.languagesRaw.split(",").map((l) => l.trim())
+            : [],
 
         //   bio: data.bio,
       });

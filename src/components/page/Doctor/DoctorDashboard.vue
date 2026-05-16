@@ -358,7 +358,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
+import { watch,onMounted } from 'vue'
 import { ref, computed } from 'vue'
 import { useAuthStore } from "../../../stores/auth"
 import NavBar from '../../page/NavBar.vue'
@@ -380,12 +380,12 @@ console.log(authStore)
 
 const doctorName = computed(() => {
   const user = authStore.user
-  console.log(user)
+  console.log("User ",user)
   return user ? `${user.profile.firstName}  ${user.profile.lastName}` : 'Emily Carter'
 })
 
 const doctorId = computed(() => authStore.user?._id || '69df6aa3d7ce10ea2bdc80ff')
-const specialization = computed(() => authStore.user?.specialization || 'Cardiology')
+const specialization = computed(() => authStore.user?.profile?.specialization || 'Cardiology')
 const initials = computed(() => doctorName.value.split(' ').map(n => n[0]).join('').toUpperCase())
 
 
@@ -401,11 +401,7 @@ const tabs = [
 const activeTab = ref('appointments')
 // console.log(appointments);
 
-const appointments = ref([
-
-  { id: 1, patientName: 'Emily Rodriguez', type: 'Follow-up', time: '09:00 AM', status: 'Confirmed', initials: 'ER' },
-  { id: 2, patientName: 'Michael Chen', type: 'Consultation', time: '10:30 AM', status: 'Confirmed', initials: 'MC' },
-])
+const appointments = ref([])
 
 const recentPatients = ref([
   { id: 1, name: 'Olivia Martinez', initials: 'OM', lastVisit: '2 days ago', condition: 'Hypertension' },
@@ -467,7 +463,7 @@ const prescriptions = ref<any[]>([])
 
 async function loadPrescriptions() {
   try {
-    alert("load precription")
+    // alert("load precription")
     const result = await prescriptionService.getDoctor();
     console.log(result.data[0])
     prescriptions.value = result.data || [];
@@ -532,9 +528,6 @@ const getStatusBadgeClass = (status: string) => {
 // ========== Accept / Reject Handlers ==========
 const handleAccept = async (appt: any) => {
   console.log("✅ Accept clicked for:", appt)
-  // TODO: Call API to update status to 'confirmed'
-  // Example: await appointmentService.updateStatus(appt.id, 'confirmed')
-  // alert(`Accept appointment for ${appt.patientId?.email || appt.patientName}?`)
   try {
     await appointmentService.updateAppointmentStatus(appt._id, 'confirmed');
     // Refresh list
@@ -548,8 +541,6 @@ const handleAccept = async (appt: any) => {
 
 const handleReject = async (appt: any) => {
   console.log("❌ Reject clicked for:", appt)
-  // TODO: Call API to update status to 'cancelled'
-  // alert(`Reject appointment for ${appt.patientId?.email || appt.patientName}?`)
   try {
     await appointmentService.updateAppointmentStatus(appt._id, 'cancelled');
     fetchAppointments();
@@ -578,6 +569,9 @@ watch(activeTab, (newTab) => {
     fetchAppointments();
   }
 });
+onMounted(() => {
+  fetchAppointments();
+})
 </script>
 
 <style scoped>

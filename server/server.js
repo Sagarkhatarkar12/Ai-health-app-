@@ -83,36 +83,38 @@ app.post("/api/doctor", ProfileRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin",adminRoutes)
 
-app.get("/api/admin/stats", async (req, res) => {
+// app.get("/api/admin/stats", async (req, res) => {
 
-});
-app.get("/api/admin/all-doctors", async (req, res) => {
+// });
+// app.get("/api/admin/all-doctors", async (req, res) => {
   
-});
-app.get("/api/admin/pending-doctors", async (req, res) => {
+// });
+// app.get("/api/admin/pending-doctors", async (req, res) => {
   
-});
-app.get("/api/admin/users", async (req, res) => {
+// });
+// app.get("/api/admin/users", async (req, res) => {
  
-});
+// });
 
-app.put("/api/admin/verify-doctor/:id", async (req, res) => {
+// app.put("/api/admin/verify-doctor/:id", async (req, res) => {
   
-});
+// });
 
-//
-app.delete("/api/admin/delete-doctor/:id", (req, res) => {
+// //
+// app.delete("/api/admin/delete-doctor/:id", (req, res) => {
   
-});
+// });
 
-app.put("/api/admin/users/:id/status", async (req, res) => {
+// app.put("/api/admin/users/:id/status", async (req, res) => {
   
-});
+// });
 
 
 
 app.use("/api/prescriptions",require("./routes/prescriptionRoutes"))
 
+const aiRoutes = require("./routes/aiRoutes");
+app.use("/api/ai", aiRoutes);
 // server code is here
 const StartServer = async () => {
   try {
